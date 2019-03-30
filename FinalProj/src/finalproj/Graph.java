@@ -5,6 +5,7 @@
  */
 package finalproj;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,23 +21,30 @@ public class Graph
     private List<Node> lstNodes;
     private List<Edge> lstEdges;
 
-    public Graph(int nDiscoverCost, int nSourceId, int nDestId)
+    public Graph(int nDiscoverCost, List<EdgeParameters> edgeParameters)
     {
+        this.lstEdges = new ArrayList<Edge>();
+        this.lstNodes = new ArrayList<Node>();
         this.nDiscoverCost = nDiscoverCost;
-        this.nSourceId = nSourceId;
-        this.nDestId = nDestId;
-        this.nGeneralCost = 0;
+        this.nGeneralCost = 0; // will calc after graph creation: 
+        
+        for(int i = 0; i < edgeParameters.size(); i++)
+        {
+            Node n1 = new Node(edgeParameters.get(i).getN1());
+            Node n2 = new Node(edgeParameters.get(i).getN2());
+            addNode(n1);
+            addNode(n2);
+            Edge e1 = new Edge(edgeParameters.get(i).getNumOfSlots(), edgeParameters.get(i).getEdgeCost(), n1, n2);
+            addEdge(e1);
+        }
     }
 
     public void addEdge(Edge newEdge)
     {
-        if(isEdgeExist(newEdge))
+        if(!isEdgeExist(newEdge))
         {
             this.lstEdges.add(newEdge);
         }
-        
-        addNode(newEdge.getNode1());
-        addNode(newEdge.getNode2());
     }
     
     public boolean isEdgeExist(Edge edge)
@@ -45,9 +53,14 @@ public class Graph
         
         for(int i = 0; i < this.lstEdges.size() && isFound == false; i++)
         {
-            if(this.lstEdges.get(i).getId() == edge.getId())
+            if(((this.lstEdges.get(i).getNode1().getId() == edge.getNode1().getId()  && 
+                 this.lstEdges.get(i).getNode2().getId() == edge.getNode2().getId()) || 
+                (this.lstEdges.get(i).getNode1().getId() == edge.getNode2().getId()  && 
+                 this.lstEdges.get(i).getNode2().getId() == edge.getNode1().getId())) &&
+                 this.lstEdges.get(i).getEdgeCost() == edge.getEdgeCost())
             {
                 isFound = true;
+                this.lstEdges.get(i).setTotalSlots(this.lstEdges.get(i).getTotalSlots() + edge.getTotalSlots());
             }
         }
         
@@ -71,4 +84,12 @@ public class Graph
             this.lstNodes.add(node);
         }
     }  
+    
+    public void printGraph()
+    {
+        for(int i = 0; i < lstEdges.size(); i++)
+        {
+            System.out.println(lstEdges.get(i).getNode1().getId() + " " + lstEdges.get(i).getNode2().getId() + " " + lstEdges.get(i).getTotalSlots());
+        }
+    }
 }

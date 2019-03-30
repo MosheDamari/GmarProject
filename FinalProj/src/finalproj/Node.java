@@ -5,6 +5,7 @@
  */
 package finalproj;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,15 +14,15 @@ import java.util.List;
  */
 public class Node
 {
-    private static int idCounter = 0;
+    //private static int idCounter = 0;
     
     private int id;
     private List<Edge> lstEdges;
     
-    public Node()
+    public Node(int id)
     {
-        this.id = idCounter++;
-        
+        this.lstEdges = new ArrayList<Edge>();
+        this.id = id;        
     }
     
     public void addEdge(Edge newEdge) 

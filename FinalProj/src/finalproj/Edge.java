@@ -20,10 +20,10 @@ public class Edge
     private Node node1;
     private Node node2;
 
-    public Edge(int nTotalSlots, int nSlotUseCost, Node node1, Node node2)
+    public Edge(int nTotalSlots, int nEdgeCost, Node node1, Node node2)
     {
         this.nTotalSlots = nTotalSlots;
-        this.nEdgeCost = nSlotUseCost;
+        this.nEdgeCost = nEdgeCost;
         this.nSlotCurrentUsage = 0;
         this.node1 = node1;
         this.node2 = node2;
@@ -46,14 +46,14 @@ public class Edge
         return nSlotCurrentUsage;
     }
 
-    public int getSlotUseCost()
+    public int getEdgeCost()
     {
         return nEdgeCost;
     }
 
-    public void setSlotUseCost(int nSlotUseCost)
+    public void setEdgeCost(int nEdgeCost)
     {
-        this.nEdgeCost = nSlotUseCost;
+        this.nEdgeCost = nEdgeCost;
     }
 
     public int getId()
