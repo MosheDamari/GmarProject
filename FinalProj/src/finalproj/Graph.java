@@ -92,4 +92,9 @@ public class Graph
             System.out.println(lstEdges.get(i).getNode1().getId() + " " + lstEdges.get(i).getNode2().getId() + " " + lstEdges.get(i).getTotalSlots());
         }
     }
+    
+    public Node getNode(int i)
+    {
+        return lstNodes.get(i);
+    }
 }
