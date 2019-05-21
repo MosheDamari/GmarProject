@@ -24,6 +24,14 @@ public class EdgeParameters
         this.edgeCost = edgeCost;
         this.numOfSlots = numOfSlots;
     }
+    
+    public EdgeParameters(Edge edge)
+    {
+        this.n1 = edge.getNode1().getId();
+        this.n2 = edge.getNode2().getId();
+        this.edgeCost = edge.getEdgeCost();
+        this.numOfSlots = edge.getTotalSlots();
+    }
 
     public int getN1()
     {

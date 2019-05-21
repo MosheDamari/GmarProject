@@ -22,7 +22,7 @@ public class Node
     public Node(int id)
     {
         this.lstEdges = new ArrayList<Edge>();
-        this.id = id;        
+        this.id = id;
     }
     
     public void addEdge(Edge newEdge) 
@@ -34,5 +34,31 @@ public class Node
     {
         return id;
     }
-            
+    
+    public Edge getEdge(int i)
+    {
+        return this.lstEdges.get(i);
+    }
+    
+    public int getEdgeCount()
+    {
+        return this.lstEdges.size();
+    }
+    
+    public List<Edge> getEdges()
+    {
+        return this.lstEdges;
+    }
+    
+    public Edge getEdgeById(int id)
+    {
+        for(int i = 0; i < this.lstEdges.size(); i++)
+        {
+            if(this.lstEdges.get(i).getId() == id)
+            {
+                return this.lstEdges.get(i);
+            }
+        }
+        return null;
+    }
 }

@@ -56,10 +56,48 @@ public class Main
         g.printGraph();
     }
     
-    public List<EdgeParameters> Griddy(Graph graph)
+    public AlgoResult Griddy(Graph graph, Costumer costumer)
     {
-        List<EdgeParameters> lstResult = new ArrayList<EdgeParameters>();
+        AlgoResult aResult = new AlgoResult(costumer);
+        Node source = graph.getNode(costumer.getSourceId());
+        Node target = graph.getNode(costumer.getTargerId());
+        Edge tempEdge;
+        Node next;
+        boolean isBreaked = false;
         
-        return null;
+        while (source.getId() != target.getId())
+        {
+            tempEdge = Utilities.getCheapestEdge(source, costumer.getBandWidth());
+            if(tempEdge.getNode1().getId() == source.getId())
+            {
+                next = tempEdge.getNode1();
+            }
+            else
+            {
+                next = tempEdge.getNode2();
+            }
+            
+            // check if all the edges are not available
+            // or (check if the next node is a leaf and not the target)
+            // cuz if it is the target we will get to it eventually
+            if(tempEdge == null || ( next.getEdgeCount() == 1 && next.getId() != target.getId()))
+            {
+                isBreaked = true;
+                break;
+            }
+            
+            aResult.addToCost(tempEdge.getEdgeCost());
+            
+            aResult.addEdgeParameter(new EdgeParameters(tempEdge));
+            
+            source = next;
+        }
+        
+        if(isBreaked == true)
+        {
+            aResult.resetRoute();
+        }
+        
+        return aResult;
     }
 }

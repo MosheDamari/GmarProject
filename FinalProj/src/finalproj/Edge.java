@@ -14,14 +14,15 @@ public class Edge
     private static int idCounter = 0;
     
     private int id;
-    private int nTotalSlots;
-    private int nSlotCurrentUsage;
+    private int nTotalSlots; // 250
+    private int nSlotCurrentUsage; // 150
     private int nEdgeCost;
     private Node node1;
     private Node node2;
 
     public Edge(int nTotalSlots, int nEdgeCost, Node node1, Node node2)
     {
+        this.id = idCounter++;
         this.nTotalSlots = nTotalSlots;
         this.nEdgeCost = nEdgeCost;
         this.nSlotCurrentUsage = 0;
