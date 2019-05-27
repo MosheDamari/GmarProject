@@ -71,4 +71,13 @@ public class AlgoResult
     {
         this.routeCost += cost;
     }
+    
+    public void print()
+    {
+        System.out.println("S: " + costumer.getSourceId() + "\nT: " + costumer.getTargerId() + "\nBW: " + costumer.getBandWidth() + "\nRouteCost: " + this.routeCost + "\nEdgeParameters:");
+        for(int i =0 ; i < route.size(); i++)
+        {
+            this.route.get(i).print();
+        }
+    }
 }

@@ -73,7 +73,10 @@ public class EdgeParameters
         this.numOfSlots = numOfSlots;
     }
     
-    
+    public void print()
+    {
+        System.out.println(this.n1 +" ,"+this.n2+" ,"+this.edgeCost+" ,"+this.numOfSlots);
+    }
 }
 
 

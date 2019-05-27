@@ -27,7 +27,10 @@ public class Node
     
     public void addEdge(Edge newEdge) 
     {
-        this.lstEdges.add(newEdge);
+        if(!isEdgeExist(newEdge))
+        {
+            this.lstEdges.add(newEdge);
+        }
     }
 
     public int getId()
@@ -60,5 +63,24 @@ public class Node
             }
         }
         return null;
+    }
+    
+    public boolean isEdgeExist(Edge edge)
+    {
+        boolean isFound = false;
+        
+        for(int i = 0; i < this.lstEdges.size() && isFound == false; i++)
+        {
+            if(((this.lstEdges.get(i).getNode1().getId() == edge.getNode1().getId()  && 
+                 this.lstEdges.get(i).getNode2().getId() == edge.getNode2().getId()) || 
+                (this.lstEdges.get(i).getNode1().getId() == edge.getNode2().getId()  && 
+                 this.lstEdges.get(i).getNode2().getId() == edge.getNode1().getId())) &&
+                 this.lstEdges.get(i).getEdgeCost() == edge.getEdgeCost())
+            {
+                isFound = true;
+            }
+        }
+        
+        return isFound;
     }
 }

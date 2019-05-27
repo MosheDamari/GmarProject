@@ -82,4 +82,14 @@ public class Edge
         this.node2 = node2;
     } 
     
+    public boolean isEquals(Edge e)
+    {
+        return this.id == e.getId();
+    }
+
+    public void setSlotCurrentUsage(int nSlotCurrentUsage)
+    {
+        this.nSlotCurrentUsage = nSlotCurrentUsage;
+    }
+
 }

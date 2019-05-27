@@ -32,8 +32,8 @@ public class Graph
         {
             Node n1 = new Node(edgeParameters.get(i).getN1());
             Node n2 = new Node(edgeParameters.get(i).getN2());
-            addNode(n1);
-            addNode(n2);
+            n1 = addNode(n1);
+            n2 = addNode(n2);
             Edge e1 = new Edge(edgeParameters.get(i).getNumOfSlots(), edgeParameters.get(i).getEdgeCost(), n1, n2);
             addEdge(e1);
         }
@@ -44,6 +44,8 @@ public class Graph
         if(!isEdgeExist(newEdge))
         {
             this.lstEdges.add(newEdge);
+            getNodeById(newEdge.getNode1().getId()).addEdge(newEdge);
+            getNodeById(newEdge.getNode2().getId()).addEdge(newEdge);
         }
     }
     
@@ -67,21 +69,28 @@ public class Graph
         return isFound;
     }
     
-    public void addNode(Node node)
+    public Node addNode(Node node)
     {
         boolean isFound = false;
+        int i;
         
-        for(int i = 0; i < this.lstNodes.size() && isFound == false; i++)
+        for(i = 0; i < this.lstNodes.size() && isFound == false; i++)
         {
             if(this.lstNodes.get(i).getId() == node.getId())
             {
                 isFound = true;
+                break;
             }
         }
         
         if(!isFound)
         {
             this.lstNodes.add(node);
+            return node;
+        }
+        else
+        {
+            return this.lstNodes.get(i);
         }
     }  
     
@@ -93,8 +102,27 @@ public class Graph
         }
     }
     
-    public Node getNode(int i)
+    public Node getNodeById(int id)
     {
-        return lstNodes.get(i);
+        for(int i = 0; i < this.lstNodes.size(); i++)
+        {
+            if(this.lstNodes.get(i).getId() == id) 
+            {
+                return this.lstNodes.get(i);
+            }
+        }
+        return null;
+    } 
+    
+    public void catchSlots(Edge e, int nBandwidth)
+    {
+        for(int i=0;i<this.lstEdges.size(); i++)
+        {
+            if(this.lstEdges.get(i).isEquals(e))
+            {
+                this.lstEdges.get(i).setSlotCurrentUsage(this.lstEdges.get(i).getSlotCurrentUsage() + nBandwidth);
+            }
+        }
     }
 }
+

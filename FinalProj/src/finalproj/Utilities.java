@@ -5,6 +5,7 @@
  */
 package finalproj;
 
+import com.sun.istack.internal.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +17,11 @@ public final class Utilities
 {
     // enterance: the function gets node and costumer band width
     // output: the function returns the cheapest available edge
-    public static Edge getCheapestEdge(Node node, int costumerBandWidth)
+    public static Edge getCheapestEdge(Node node, int costumerBandWidth, @Nullable Edge eLastUsed)
     {
         int minCost;
         int minCostIndex;
-        List<Edge> copyNodeEdges = new ArrayList<>(node.getEdges());
+        List<Edge> copyNodeEdges = CreateCopyList(node.getEdges());
         boolean isDone = false;
         int i;
 
@@ -29,7 +30,7 @@ public final class Utilities
             isDone = true;
             for (i = 0; i < copyNodeEdges.size(); i++)
             {
-                if(!(copyNodeEdges.get(i).getSlotCurrentUsage() + costumerBandWidth <= copyNodeEdges.get(i).getTotalSlots()))
+                if((eLastUsed != null && (eLastUsed.isEquals(copyNodeEdges.get(i)))) || (!(copyNodeEdges.get(i).getSlotCurrentUsage() + costumerBandWidth <= copyNodeEdges.get(i).getTotalSlots())))
                 {
                     isDone = false;
                     break;
@@ -57,5 +58,17 @@ public final class Utilities
         Edge e = node.getEdgeById(copyNodeEdges.get(minCostIndex).getId());
         
         return e;
+    }
+    
+    public static List<Edge> CreateCopyList(List<Edge> list)
+    {
+        List<Edge> newList = new ArrayList<Edge>();
+        
+        for(int i = 0; i < list.size(); i++)
+        {
+            newList.add(list.get(i));
+        }
+        
+        return newList;
     }
 }
