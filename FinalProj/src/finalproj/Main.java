@@ -175,16 +175,9 @@ public class Main
         
         return aResult;
     }
-<<<<<<< HEAD
-    
-//    public static AlgoResult Diejkstra(Graph graph, Costumer costumer)
-//    {
-//        
-//    }
-=======
 
     public static AlgoResult Dijkstra(Graph graph, Costumer costumer){
         return null; 
     }
->>>>>>> 120bdd7ee891423666284d14b21174e31db0b8c2
+
 }
