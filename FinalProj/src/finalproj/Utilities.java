@@ -7,7 +7,9 @@ package finalproj;
 
 import com.sun.istack.internal.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -107,5 +109,23 @@ public final class Utilities
         }
         
         return null;
+    }
+
+    public static Node findMinimumNode(HashMap<Node, Integer> map, Set<Integer> settled)
+    {
+        Node minKey = null;
+        int minValue = Integer.MAX_VALUE;
+
+        for(Node key : map.keySet()) {
+            if (!settled.contains(key.getId())) {
+                int value = map.get(key);
+                if (value < minValue) {
+                    minValue = value;
+                    minKey = key;
+                }
+            }
+        }
+
+        return minKey;
     }
 }

@@ -144,5 +144,10 @@ public class Graph
             }
         }
     }
+
+    public int getNumberOfNodes()
+    {
+        return (this.lstNodes.size());
+    }
 }
 

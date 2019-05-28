@@ -92,4 +92,18 @@ public class Edge
         this.nSlotCurrentUsage = nSlotCurrentUsage;
     }
 
+    public Node getOtherNode(int nodeId)
+    {
+        Node returnValue = null;
+
+        if (this.node1.getId() == nodeId){
+            returnValue = this.node2;
+        }
+        else if (this.node2.getId() == nodeId) {
+            returnValue = this.node1;
+        }
+
+        return returnValue;
+    }
+
 }

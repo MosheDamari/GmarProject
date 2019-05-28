@@ -5,8 +5,7 @@
  */
 package finalproj;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -23,14 +22,15 @@ public class Main
         AlgoResult aResult = null;
         Costumer c01 = new Costumer(1, 1, 9, 30, 1);
         EdgeParameters ep01 = new EdgeParameters(1, 2, 4, 20);
-        EdgeParameters ep02 = new EdgeParameters(1, 2, 6, 30);
+        // TODO: Ask about double edges
+        // EdgeParameters ep02 = new EdgeParameters(1, 2, 6, 30);
         EdgeParameters ep03 = new EdgeParameters(1, 3, 5, 20);
         EdgeParameters ep04 = new EdgeParameters(1, 4, 2, 40);
         EdgeParameters ep05 = new EdgeParameters(2, 5, 7, 40);
         EdgeParameters ep06 = new EdgeParameters(4, 5, 3, 50);
         EdgeParameters ep07 = new EdgeParameters(4, 6, 9, 20);
         EdgeParameters ep08 = new EdgeParameters(4, 7, 5, 70);
-        EdgeParameters ep09 = new EdgeParameters(5, 7, 10, 10);
+        // EdgeParameters ep09 = new EdgeParameters(5, 7, 10, 10);
         EdgeParameters ep10 = new EdgeParameters(5, 7, 3, 30);
         EdgeParameters ep11 = new EdgeParameters(6, 7, 8, 90);
         EdgeParameters ep12 = new EdgeParameters(3, 8, 6, 30);
@@ -42,14 +42,14 @@ public class Main
         EdgeParameters ep18 = new EdgeParameters(3, 4, 4, 40);
         List<EdgeParameters> lst = new ArrayList<EdgeParameters>();
         lst.add(ep01);
-        lst.add(ep02);
+        // lst.add(ep02);
         lst.add(ep03);
         lst.add(ep04);
         lst.add(ep05);
         lst.add(ep06);
         lst.add(ep07);
         lst.add(ep08);
-        lst.add(ep09);
+        // lst.add(ep09);
         lst.add(ep10);
         lst.add(ep11);
         lst.add(ep12);
@@ -64,10 +64,10 @@ public class Main
         g.printGraph();
         System.out.println("\n**************************************************************************\n");
         //aResult = Greedy(g, c01);
-        aResult = Naive(g, c01);
+        //aResult = Naive(g, c01);
+        aResult = Dijkstra(g, c01);
         
         aResult.print();
-        
     }
     
     public static AlgoResult Greedy(Graph graph, Costumer costumer)
@@ -177,7 +177,81 @@ public class Main
     }
 
     public static AlgoResult Dijkstra(Graph graph, Costumer costumer){
-        return null; 
+
+        AlgoResult aResult = new AlgoResult(costumer);
+
+        // Initialize variables
+        int nNumberOfNodes = graph.getNumberOfNodes();
+        HashMap<Node, Integer> map = new HashMap<Node, Integer>();
+
+        Set<Integer> settled = new HashSet<Integer>();
+        Node nSource = graph.getNodeById(costumer.getSourceId());
+
+        HashMap<Integer, Integer> parents = new HashMap<Integer, Integer>();
+
+        // Add source node
+        map.put(nSource, 0);
+        parents.put(nSource.getId(), -1);
+
+        while (settled.size() != nNumberOfNodes) {
+            // Find minimum in map
+            Node nMinimum = Utilities.findMinimumNode(map, settled);
+
+            // adding the node whose distance is
+            // finalized
+            settled.add(nMinimum.getId());
+
+            processNeighbors(nMinimum, settled, map, parents);
+        }
+
+        aResult.setRouteCost(map.get(graph.getNodeById(costumer.getTargerId())));
+        getRoute(costumer.getTargerId(), parents, aResult);
+
+        return aResult;
     }
 
+    private static void processNeighbors(Node node,
+                                         Set<Integer> settled,
+                                         HashMap<Node, Integer> map,
+                                         HashMap<Integer, Integer> parents)
+    {
+        int edgeDistance = -1;
+        int newDistance = -1;
+
+        for (Edge e:node.getEdges()) {
+            Node curr = e.getOtherNode(node.getId());
+
+            if (!settled.contains(curr.getId()))
+            {
+                edgeDistance = e.getEdgeCost();
+                newDistance = map.get(node) + edgeDistance;
+
+                // Check if exist
+                if (map.containsKey(curr)) {
+                    // If new distance is cheaper in cost
+                    if (newDistance < map.get(curr)) {
+                        map.put(curr, newDistance);
+                        parents.put(curr.getId(), node.getId());
+                    }
+                }
+                else {
+                    map.put(curr, newDistance);
+                    parents.put(curr.getId(), node.getId());
+                }
+            }
+        }
+    }
+
+    private static void getRoute(Integer nTargetId, HashMap<Integer, Integer> parents, AlgoResult a)
+    {
+        Integer curr = parents.get(nTargetId);
+        a.addEdgeParameter(new EdgeParameters(nTargetId, curr, -1, -1));
+
+        while (curr != -1)
+        {
+            // TODO: Ask about EdgeParameters VS Edge
+            a.addEdgeParameter(new EdgeParameters(curr, parents.get(curr), -1, -1));
+            curr = parents.get(curr);
+        }
+    }
 }
