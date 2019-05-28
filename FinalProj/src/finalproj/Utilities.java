@@ -55,9 +55,13 @@ public final class Utilities
             }
         }
         
-        Edge e = node.getEdgeById(copyNodeEdges.get(minCostIndex).getId());
+        if(!copyNodeEdges.isEmpty())
+        {
+            Edge e = node.getEdgeById(copyNodeEdges.get(minCostIndex).getId());
+            return e;
+        }
         
-        return e;
+        return null;
     }
     
     public static List<Edge> CreateCopyList(List<Edge> list)
@@ -70,5 +74,38 @@ public final class Utilities
         }
         
         return newList;
+    }
+  
+    public static Edge getFirstEdge(Node node, int costumerBandWidth, @Nullable Edge eLastUsed)
+    {
+        List<Edge> copyNodeEdges = CreateCopyList(node.getEdges());
+        boolean isDone = false;
+        int i;
+
+        while (isDone == false)
+        {
+            isDone = true;
+            for (i = 0; i < copyNodeEdges.size(); i++)
+            {
+                if((eLastUsed != null && (eLastUsed.isEquals(copyNodeEdges.get(i)))) || (!(copyNodeEdges.get(i).getSlotCurrentUsage() + costumerBandWidth <= copyNodeEdges.get(i).getTotalSlots())))
+                {
+                    isDone = false;
+                    break;
+                }
+            }
+            
+            if(isDone == false)
+            {
+                copyNodeEdges.remove(i);
+            }
+        }
+        
+        if(!copyNodeEdges.isEmpty())
+        {
+            Edge e = node.getEdgeById(copyNodeEdges.get(0).getId());
+            return e;
+        }
+        
+        return null;
     }
 }

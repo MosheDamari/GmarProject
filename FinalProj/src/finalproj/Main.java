@@ -63,7 +63,9 @@ public class Main
         Graph g = new Graph(1, lst);
         g.printGraph();
         System.out.println("\n**************************************************************************\n");
-        aResult = Greedy(g, c01);
+        //aResult = Greedy(g, c01);
+        aResult = Naive(g, c01);
+        
         aResult.print();
         
     }
@@ -74,25 +76,29 @@ public class Main
         Node source = graph.getNodeById(costumer.getSourceId());
         Node target = graph.getNodeById(costumer.getTargerId());
         Edge tempEdge = null;
-        Node next;
+        Node next = null;
         boolean isBreaked = false;
         
         while (source.getId() != target.getId())
         {
             tempEdge = Utilities.getCheapestEdge(source, costumer.getBandWidth(), tempEdge);
-            if(tempEdge.getNode1().getId() == source.getId())
+            
+            if(tempEdge != null)
             {
-                next = tempEdge.getNode2();
-            }
-            else
-            {
-                next = tempEdge.getNode1();
+                if(tempEdge.getNode1().getId() == source.getId())
+                {
+                    next = tempEdge.getNode2();
+                }
+                else
+                {
+                    next = tempEdge.getNode1();
+                }
             }
             
             // check if all the edges are not available
             // or (check if the next node is a leaf and not the target)
             // cuz if it is the target we will get to it eventually
-            if(tempEdge == null || ( next.getEdgeCount() == 1 && next.getId() != target.getId()))
+            if(tempEdge == null || ( next != null && next.getEdgeCount() == 1 && next.getId() != target.getId()))
             {
                 isBreaked = true;
                 break;
@@ -109,7 +115,9 @@ public class Main
         
         if(isBreaked == true)
         {
-            aResult.resetRoute();
+            //aResult.resetRoute();
+            aResult.setRouteCost(0);
+            graph.rollbackRoute(aResult.getRoute(), costumer.getBandWidth());
         }
         
         return aResult;
@@ -117,6 +125,59 @@ public class Main
     
     public static AlgoResult Naive(Graph graph, Costumer costumer)
     {
-        return null;
+        AlgoResult aResult = new AlgoResult(costumer);
+        Node source = graph.getNodeById(costumer.getSourceId());
+        Node target = graph.getNodeById(costumer.getTargerId());
+        Edge tempEdge = null;
+        Node next = null;
+        boolean isBreaked = false;
+        
+        while (source.getId() != target.getId())
+        {
+            tempEdge = Utilities.getFirstEdge(source, costumer.getBandWidth(), tempEdge);
+            
+            if(tempEdge != null)
+            {
+                if(tempEdge.getNode1().getId() == source.getId())
+                {
+                    next = tempEdge.getNode2();
+                }
+                else
+                {
+                    next = tempEdge.getNode1();
+                }
+            }
+            
+            // check if all the edges are not available
+            // or (check if the next node is a leaf and not the target)
+            // cuz if it is the target we will get to it eventually
+            if(tempEdge == null || ( next != null && next.getEdgeCount() == 1 && next.getId() != target.getId()))
+            {
+                isBreaked = true;
+                break;
+            }
+            
+            aResult.addToCost(tempEdge.getEdgeCost());
+            
+            graph.catchSlots(tempEdge, costumer.getBandWidth());
+            
+            aResult.addEdgeParameter(new EdgeParameters(tempEdge));
+            
+            source = next;
+        }
+        
+        if(isBreaked == true)
+        {
+            //aResult.resetRoute();
+            aResult.setRouteCost(0);
+            graph.rollbackRoute(aResult.getRoute(), costumer.getBandWidth());
+        }
+        
+        return aResult;
     }
+    
+//    public static AlgoResult Diejkstra(Graph graph, Costumer costumer)
+//    {
+//        
+//    }
 }

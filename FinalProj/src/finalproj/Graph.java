@@ -124,5 +124,25 @@ public class Graph
             }
         }
     }
+    
+    // If path not found return to the last configuration
+    public void rollbackRoute(List<EdgeParameters> list, int nBandwidth)
+    {
+        for(int i = 0; i < list.size(); i++)
+        {
+            for(int j =0; j < this.lstEdges.size(); j++)
+            {
+                if((( this.lstEdges.get(j).getNode1().getId() == list.get(i).getN1() && 
+                      this.lstEdges.get(j).getNode2().getId() == list.get(i).getN2()) ||
+                    ( this.lstEdges.get(j).getNode1().getId() == list.get(i).getN2() &&
+                      this.lstEdges.get(j).getNode2().getId() == list.get(i).getN1())) &&
+                      this.lstEdges.get(j).getEdgeCost() == list.get(i).getEdgeCost())
+                {
+                    this.lstEdges.get(j).setSlotCurrentUsage(this.lstEdges.get(j).getSlotCurrentUsage() - nBandwidth);
+                    break;
+                }
+            }
+        }
+    }
 }
 

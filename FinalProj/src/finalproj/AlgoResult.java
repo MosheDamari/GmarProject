@@ -80,4 +80,9 @@ public class AlgoResult
             this.route.get(i).print();
         }
     }
+
+    public List<EdgeParameters> getRoute()
+    {
+        return route;
+    }
 }
