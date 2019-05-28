@@ -119,4 +119,8 @@ public class Main
     {
         return null;
     }
+
+    public static AlgoResult Dijkstra(Graph graph, Costumer costumer){
+        return null; 
+    }
 }
