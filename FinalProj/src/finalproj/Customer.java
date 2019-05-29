@@ -9,7 +9,7 @@ package finalproj;
  *
  * @author Liron Levi
  */
-public class Costumer
+public class Customer
 {
     private int nSerialNumber;
     private int nSourceId;
@@ -17,16 +17,16 @@ public class Costumer
     private int nBandWidth;
     private int nTime;
     
-    public Costumer(Costumer costumer)
+    public Customer(Customer customer)
     {
-        this.nSerialNumber = costumer.getSerialNumber();
-        this.nSourceId = costumer.getSourceId();
-        this.nTargerId = costumer.getTargerId();
-        this.nBandWidth = costumer.getBandWidth();
-        this.nTime = costumer.getTime();
+        this.nSerialNumber = customer.getSerialNumber();
+        this.nSourceId = customer.getSourceId();
+        this.nTargerId = customer.getTargerId();
+        this.nBandWidth = customer.getBandWidth();
+        this.nTime = customer.getTime();
     }
 
-    public Costumer(int nSerialNumber, int nSourceId, int nTargerId, int nBandWidth, int nTime)
+    public Customer(int nSerialNumber, int nSourceId, int nTargerId, int nBandWidth, int nTime)
     {
         this.nSerialNumber = nSerialNumber;
         this.nSourceId = nSourceId;

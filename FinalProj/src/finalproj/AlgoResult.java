@@ -14,27 +14,27 @@ import java.util.List;
  */
 public class AlgoResult
 {
-    private Costumer costumer;
+    private Customer customer;
     private int routeCost;
     private int totalCost;
     private List<EdgeParameters> route;
 
-    public AlgoResult(Costumer costumer)
+    public AlgoResult(Customer customer)
     {
-        this.costumer = new Costumer(costumer);
+        this.customer = new Customer(customer);
         this.routeCost = 0;
         this.totalCost = 0;
         this.route = new ArrayList<EdgeParameters>();
     }
 
-    public Costumer getCostumer()
+    public Customer getCustomer()
     {
-        return costumer;
+        return customer;
     }
 
-    public void setCostumer(Costumer costumer)
+    public void setCustomer(Customer customer)
     {
-        this.costumer = costumer;
+        this.customer = customer;
     }
 
     public int getRouteCost()
@@ -74,7 +74,7 @@ public class AlgoResult
     
     public void print()
     {
-        System.out.println("S: " + costumer.getSourceId() + "\nT: " + costumer.getTargerId() + "\nBW: " + costumer.getBandWidth() + "\nRouteCost: " + this.routeCost + "\nEdgeParameters:");
+        System.out.println("S: " + customer.getSourceId() + "\nT: " + customer.getTargerId() + "\nBW: " + customer.getBandWidth() + "\nRouteCost: " + this.routeCost + "\nEdgeParameters:");
         for(int i =0 ; i < route.size(); i++)
         {
             this.route.get(i).print();

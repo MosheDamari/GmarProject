@@ -112,7 +112,11 @@ public class Graph
             }
         }
         return null;
-    } 
+    }
+
+    public int getDiscoverCost(){ return this.nDiscoverCost; }
+
+    public List<Edge> getEdgeParametersList() { return this.lstEdges; }
     
     public void catchSlots(Edge e, int nBandwidth)
     {
@@ -148,6 +152,11 @@ public class Graph
     public int getNumberOfNodes()
     {
         return (this.lstNodes.size());
+    }
+
+    public Edge findEdgeByNodes(int n1, int n2)
+    {
+        return null;
     }
 }
 

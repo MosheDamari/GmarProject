@@ -17,9 +17,9 @@ import java.util.Set;
  */
 public final class Utilities
 {
-    // enterance: the function gets node and costumer band width
+    // enterance: the function gets node and customer band width
     // output: the function returns the cheapest available edge
-    public static Edge getCheapestEdge(Node node, int costumerBandWidth, @Nullable Edge eLastUsed)
+    public static Edge getCheapestEdge(Node node, int customerBandWidth, @Nullable Edge eLastUsed)
     {
         int minCost;
         int minCostIndex;
@@ -32,7 +32,7 @@ public final class Utilities
             isDone = true;
             for (i = 0; i < copyNodeEdges.size(); i++)
             {
-                if((eLastUsed != null && (eLastUsed.isEquals(copyNodeEdges.get(i)))) || (!(copyNodeEdges.get(i).getSlotCurrentUsage() + costumerBandWidth <= copyNodeEdges.get(i).getTotalSlots())))
+                if((eLastUsed != null && (eLastUsed.isEquals(copyNodeEdges.get(i)))) || (!(copyNodeEdges.get(i).getSlotCurrentUsage() + customerBandWidth <= copyNodeEdges.get(i).getTotalSlots())))
                 {
                     isDone = false;
                     break;
@@ -78,7 +78,7 @@ public final class Utilities
         return newList;
     }
   
-    public static Edge getFirstEdge(Node node, int costumerBandWidth, @Nullable Edge eLastUsed)
+    public static Edge getFirstEdge(Node node, int customerBandWidth, @Nullable Edge eLastUsed)
     {
         List<Edge> copyNodeEdges = CreateCopyList(node.getEdges());
         boolean isDone = false;
@@ -89,7 +89,7 @@ public final class Utilities
             isDone = true;
             for (i = 0; i < copyNodeEdges.size(); i++)
             {
-                if((eLastUsed != null && (eLastUsed.isEquals(copyNodeEdges.get(i)))) || (!(copyNodeEdges.get(i).getSlotCurrentUsage() + costumerBandWidth <= copyNodeEdges.get(i).getTotalSlots())))
+                if((eLastUsed != null && (eLastUsed.isEquals(copyNodeEdges.get(i)))) || (!(copyNodeEdges.get(i).getSlotCurrentUsage() + customerBandWidth <= copyNodeEdges.get(i).getTotalSlots())))
                 {
                     isDone = false;
                     break;
@@ -111,21 +111,29 @@ public final class Utilities
         return null;
     }
 
-    public static Node findMinimumNode(HashMap<Node, Integer> map, Set<Integer> settled)
+    public static Graph getAvailableCapGraph(Graph oldG, int nCustomerBW)
     {
-        Node minKey = null;
-        int minValue = Integer.MAX_VALUE;
+        List<EdgeParameters> lstEP = new ArrayList<EdgeParameters>();
 
-        for(Node key : map.keySet()) {
-            if (!settled.contains(key.getId())) {
-                int value = map.get(key);
-                if (value < minValue) {
-                    minValue = value;
-                    minKey = key;
-                }
+        // Go over all edges in the graph
+        for (Edge e : oldG.getEdgeParametersList())
+        {
+            // Check if the current edge has enough
+            // capacity (bandwith) to transfer the customer
+            if (e.getTotalSlots() - e.getSlotCurrentUsage() >= nCustomerBW)
+            {
+                lstEP.add(new EdgeParameters(e.getNode1().getId(),
+                                             e.getNode2().getId(),
+                                             e.getEdgeCost(),
+                                             e.getTotalSlots()));
             }
         }
 
-        return minKey;
+        return new Graph(oldG.getDiscoverCost(), lstEP);
+    }
+
+    public static void assignCustomer(Customer c, AlgoResult a)
+    {
+
     }
 }
