@@ -1,16 +1,24 @@
 package finalproj;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class Dijkstra {
 
-    private static HashMap<Node, Integer> map = new HashMap<Node, Integer>();
-    private static Set<Integer> settled = new HashSet<Integer>();
-    private static HashMap<Integer, Integer> parents = new HashMap<Integer, Integer>();
+    private static HashMap<Node, Integer> map;
+    private static Set<Integer> settled;
+    private static HashMap<Integer, Integer> parents;
+    private static List<Edge> lstEdges;
 
     public static AlgoResult run(Graph graph, Customer customer){
+    	
+    	lstEdges = new ArrayList<Edge>();
+    	map = new HashMap<Node, Integer>();
+    	settled = new HashSet<Integer>();
+    	parents = new HashMap<Integer, Integer>();
 
         AlgoResult aResult = new AlgoResult(customer);
 
@@ -37,7 +45,7 @@ public final class Dijkstra {
         }
 
         aResult.setRouteCost(map.get(newGraph.getNodeById(customer.getTargerId())));
-        getRoute(customer.getTargerId(), aResult);
+        getRoute(customer.getTargerId(), aResult, newGraph);
 
         return aResult;
     }
@@ -62,26 +70,51 @@ public final class Dijkstra {
                     if (newDistance < map.get(curr)) {
                         map.put(curr, newDistance);
                         parents.put(curr.getId(), node.getId());
+                        lstEdges.add(e);
                     }
                 }
                 else {
                     map.put(curr, newDistance);
                     parents.put(curr.getId(), node.getId());
+                    lstEdges.add(e);
                 }
             }
         }
     }
 
-    private static void getRoute(Integer nTargetId, AlgoResult a)
+    private static void getRoute(Integer nTargetId, AlgoResult a, Graph g)
     {
         Integer curr = parents.get(nTargetId);
-        a.addEdgeParameter(new EdgeParameters(nTargetId, curr, -1, -1));
+        Edge edge = null;
+        
+        for (Edge e : lstEdges) {
+        	if ((nTargetId == e.getNode1().getId() && 
+				curr == e.getNode2().getId()) || 
+    			(nTargetId == e.getNode2().getId() && 
+				curr == e.getNode1().getId()))
+			{
+        		edge = e;
+        		break;
+			}
+        }
+        
+        a.addEdgeParameter(new EdgeParameters(nTargetId, curr, edge.getEdgeCost(), edge.getTotalSlots()));
 
         while (curr != -1)
-        {
-            // TODO: Ask about EdgeParameters VS Edge
-            a.addEdgeParameter(new EdgeParameters(curr, parents.get(curr), -1, -1));
+        {    
+        	a.addEdgeParameter(new EdgeParameters(curr, parents.get(curr), edge.getEdgeCost(), edge.getTotalSlots()));
             curr = parents.get(curr);
+            
+        	for (Edge e : lstEdges) {
+	        	if ((nTargetId == e.getNode1().getId() && 
+					curr == e.getNode2().getId()) || 
+	    			(nTargetId == e.getNode2().getId() && 
+					curr == e.getNode1().getId()))
+				{
+	        		edge = e;
+	        		break;
+				}
+	        }
         }
     }
 

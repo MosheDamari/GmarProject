@@ -132,8 +132,14 @@ public final class Utilities
         return new Graph(oldG.getDiscoverCost(), lstEP);
     }
 
-    public static void assignCustomer(Customer c, AlgoResult a)
+    
+    public static boolean compareEdgeToEdgeParam(EdgeParameters ep, Edge e)
     {
-
+    	return (((ep.getN1() == e.getNode1().getId() &&
+    			ep.getN2() == e.getNode2().getId()) || 
+    			(ep.getN1() == e.getNode2().getId() &&
+    	    	ep.getN2() == e.getNode1().getId())) &&
+    			ep.getEdgeCost() == e.getEdgeCost() &&
+    			ep.getNumOfSlots() == e.getTotalSlots());
     }
 }

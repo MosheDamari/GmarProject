@@ -118,6 +118,8 @@ public class Graph
 
     public List<Edge> getEdgeParametersList() { return this.lstEdges; }
     
+    public List<Node> getNodesList() { return this.lstNodes; }
+    
     public void catchSlots(Edge e, int nBandwidth)
     {
         for(int i=0;i<this.lstEdges.size(); i++)
@@ -153,10 +155,25 @@ public class Graph
     {
         return (this.lstNodes.size());
     }
-
+    
     public Edge findEdgeByNodes(int n1, int n2)
     {
         return null;
     }
+    
+    public void updateSlots(List<EdgeParameters> lstEdgs, int custBandWidth)
+    {
+    	for (EdgeParameters ep : lstEdgs)
+    	{
+    		for (Edge e : this.getEdgeParametersList())
+    		{
+        		if (Utilities.compareEdgeToEdgeParam(ep, e))
+        		{
+        			e.setSlotCurrentUsage(e.getSlotCurrentUsage() + custBandWidth);
+        		}
+    		}
+    	}
+    }
+    
 }
 

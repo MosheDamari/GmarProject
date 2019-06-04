@@ -15,14 +15,17 @@ public final class FilesUtils {
 
         try {
             // Try to read from the topology file
-            Files.lines(Paths.get("./FinalProj/files/topology.txt")).forEach((line) -> {
+            Files.lines(Paths.get(System.getProperty("user.dir") + "\\GmarProject\\FinalProj\\files\\topology.txt")).forEach((line) -> {
                 // Split every line by space char and add new EP
-                String[] split = line.split(" ");
-                EdgeParameters currEP = new EdgeParameters(Integer.parseInt(split[0]),
-                                                           Integer.parseInt(split[1]),
-                                                           Integer.parseInt(split[3]),
-                                                           Integer.parseInt(split[2]));
-                lstEP.add(currEP);
+            	if (line.matches(".*\\d.*")) {
+            		String[] split = line.substring(1, line.indexOf("]")).split(",");
+            		EdgeParameters currEP = new EdgeParameters(Integer.parseInt(split[0]),
+									            				Integer.parseInt(split[1]),
+									                            Integer.parseInt(split[3]),
+									                            Integer.parseInt(split[2]));
+            		lstEP.add(currEP);
+            		
+            	}                
             });
         }
         catch (IOException e) {
@@ -39,15 +42,17 @@ public final class FilesUtils {
 
         try {
             // Try to read from the customers file
-            Files.lines(Paths.get("./FinalProj/files/customers.txt")).forEach((line) -> {
+            Files.lines(Paths.get(System.getProperty("user.dir") + "\\GmarProject\\FinalProj\\files\\customers.txt")).forEach((line) -> {
                 // Split every line by space char and add new customer
-                String[] split = line.split(" ");
-                Customer currC = new Customer(Integer.parseInt(split[0]),
-                                              Integer.parseInt(split[1]),
-                                              Integer.parseInt(split[2]),
-                                              Integer.parseInt(split[3]),
-                                              Integer.parseInt(split[4]));
-                lstC.add(currC);
+            	if (line.matches(".*\\d.*")) {
+	                String[] split = line.substring(1, line.indexOf("]")).split(",");
+	                Customer currC = new Customer(Integer.parseInt(split[0]),
+	                                              Integer.parseInt(split[1]),
+	                                              Integer.parseInt(split[2]),
+	                                              Integer.parseInt(split[3]),
+	                                              Integer.parseInt(split[4]));
+	                lstC.add(currC);
+            	}
             });
         }
         catch (IOException e) {
