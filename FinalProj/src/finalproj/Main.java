@@ -5,7 +5,7 @@
  */
 package finalproj;
 
-import java.time.chrono.MinguoChronology;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -18,7 +18,7 @@ public class Main
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         AlgoResult greedyResult = null, naiveResult = null, djkResult = null;
         List<AlgoResult> lstResults;
@@ -70,5 +70,19 @@ public class Main
             
             System.out.println("\n**************************************************************************\n");
         }
+        //aResult = Dijkstra.run(g, lstC.get(0));
+
+//        // Iterate over the customers and run the algorithms
+//        for (Customer c : lstC)
+//        {
+//            //aResult = Greedy.run(g, lstC.get(0));
+//            //aResult = Naive.run(g, lstC.get(0));
+//            aResult = Dijkstra.run(g, c);
+//        }
+
+//        aResult.print();
+//        
+//        Graph g1 = new Graph(1, aResult.getRoute());
+//        FilesUtils.writeGraph(g1);
     }
 }

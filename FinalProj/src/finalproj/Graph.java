@@ -156,11 +156,11 @@ public class Graph
         return (this.lstNodes.size());
     }
     
-    public Edge findEdgeByNodes(int n1, int n2)
+    public int getNumberOfEdges()
     {
-        return null;
+        return (this.lstEdges.size());
     }
-    
+
     public void updateSlots(List<EdgeParameters> lstEdgs, int custBandWidth)
     {
     	for (EdgeParameters ep : lstEdgs)
