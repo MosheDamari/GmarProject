@@ -153,7 +153,11 @@ public class Graph
     {
         return (this.lstNodes.size());
     }
-
+    
+    public int getNumberOfEdges()
+    {
+        return (this.lstEdges.size());
+    }
     public Edge findEdgeByNodes(int n1, int n2)
     {
         return null;

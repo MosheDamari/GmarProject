@@ -5,6 +5,7 @@
  */
 package finalproj;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -17,7 +18,7 @@ public class Main
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         AlgoResult aResult = null;
 
@@ -42,5 +43,11 @@ public class Main
 //        }
 
         aResult.print();
+        
+        Graph g1 = new Graph(1, aResult.getRoute());
+        FilesUtils.writeGraph(g1);
+        
+        
+        
     }
 }
