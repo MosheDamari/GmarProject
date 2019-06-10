@@ -7,42 +7,26 @@ package finalproj;
 
 /**
  *
- * @author Liron Levi
+ *
  */
 public class Customer
 {
-    private int nSerialNumber;
     private int nSourceId;
-    private int nTargerId;
+    private int nTargetId;
     private int nBandWidth;
-    private int nTime;
-    
+
     public Customer(Customer customer)
     {
-        this.nSerialNumber = customer.getSerialNumber();
         this.nSourceId = customer.getSourceId();
-        this.nTargerId = customer.getTargerId();
+        this.nTargetId = customer.getTargetId();
         this.nBandWidth = customer.getBandWidth();
-        this.nTime = customer.getTime();
     }
 
-    public Customer(int nSerialNumber, int nSourceId, int nTargerId, int nBandWidth, int nTime)
+    public Customer(int nSourceId, int nTargetId, int nBandWidth)
     {
-        this.nSerialNumber = nSerialNumber;
         this.nSourceId = nSourceId;
-        this.nTargerId = nTargerId;
+        this.nTargetId = nTargetId;
         this.nBandWidth = nBandWidth;
-        this.nTime = nTime;
-    }
-
-    public int getSerialNumber()
-    {
-        return nSerialNumber;
-    }
-
-    public void setSerialNumber(int nSerialNumber)
-    {
-        this.nSerialNumber = nSerialNumber;
     }
 
     public int getSourceId()
@@ -50,38 +34,13 @@ public class Customer
         return nSourceId;
     }
 
-    public void setSourceId(int nSourceId)
+    public int getTargetId()
     {
-        this.nSourceId = nSourceId;
-    }
-
-    public int getTargerId()
-    {
-        return nTargerId;
-    }
-
-    public void setTargerId(int nTargerId)
-    {
-        this.nTargerId = nTargerId;
+        return nTargetId;
     }
 
     public int getBandWidth()
     {
         return nBandWidth;
     }
-
-    public void setBandWidth(int nBandWidth)
-    {
-        this.nBandWidth = nBandWidth;
-    }
-
-    public int getTime()
-    {
-        return nTime;
-    }
-
-    public void setTime(int nTime)
-    {
-        this.nTime = nTime;
-    }   
 }

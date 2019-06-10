@@ -6,83 +6,47 @@
 package finalproj;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
- * @author Liron Levi
+ *
  */
 public class AlgoResult
 {
     private Customer customer;
-    private int routeCost;
-    private int totalCost;
-    private List<EdgeParameters> route;
+    private int nRouteCost;
+    private List<Integer> route;
 
     public AlgoResult(Customer customer)
     {
         this.customer = new Customer(customer);
-        this.routeCost = 0;
-        this.totalCost = 0;
-        this.route = new ArrayList<EdgeParameters>();
+        this.nRouteCost = 0;
+        this.route = new ArrayList<>();
     }
 
-    public Customer getCustomer()
+    public Customer getCustomer() { return this.customer; }
+
+    public int getRouteCost() { return this.nRouteCost; }
+
+    public void setRouteCost(int routeCost) { this.nRouteCost = routeCost; }
+
+    public List<Integer> getRoute(){ return this.route; }
+
+    public void addNode(int n)
     {
-        return customer;
+        this.route.add(n);
     }
 
-    public void setCustomer(Customer customer)
-    {
-        this.customer = customer;
-    }
-
-    public int getRouteCost()
-    {
-        return routeCost;
-    }
-
-    public void setRouteCost(int routeCost)
-    {
-        this.routeCost = routeCost;
-    }
-
-    public int getTotalCost()
-    {
-        return totalCost;
-    }
-
-    public void setTotalCost(int totalCost)
-    {
-        this.totalCost = totalCost;
-    }
-    
-    public void addEdgeParameter(EdgeParameters ep)
-    {
-        this.route.add(ep);
-    }
-    
-    public void resetRoute()
-    {
-        this.route = null;
-    }
-    
-    public void addToCost(int cost)
-    {
-        this.routeCost += cost;
-    }
-    
     public void print()
     {
-        System.out.println("S: " + customer.getSourceId() + "\nT: " + customer.getTargerId() + "\nBW: " + customer.getBandWidth() + "\nRouteCost: " + this.routeCost + "\nEdgeParameters:");
-        for(int i =0 ; i < route.size(); i++)
-        {
-            this.route.get(i).print();
+        System.out.println("Cost: " + this.nRouteCost);
+        System.out.print("Route: ");
+        System.out.print(this.route.get(0));
+        for (int i = 1; i < this.route.size(); i++) {
+            System.out.print(" -> " + this.route.get(i));
         }
-    }
-
-    public List<EdgeParameters> getRoute()
-    {
-        return route;
     }
 }

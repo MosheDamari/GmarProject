@@ -21,12 +21,10 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         AlgoResult greedyResult, optResult;
-        List<AlgoResult> lstResults;
+//        List<AlgoResult> lstResults;
 
         // Read the topology and build the graph
         Graph g = FilesUtils.readGraph();
-        Graph g2 = FilesUtils.readGraph();
-        Graph resultGraph = FilesUtils.readGraph(); 
 
         // Get the customers data
         List<Customer> lstC = FilesUtils.readCustomers();
@@ -38,29 +36,30 @@ public class Main
         // Iterate over the customers and run the algorithms
         for (Customer c : lstC)
         {
-            optResult = Dijkstra.run(g, c);
+            optResult = Dijkstra.run(g, c, true);
             optResult.print();
             System.out.println("\n**************************************************************************\n");
-        	greedyResult = Greedy.run(g2, c);
+
+        	greedyResult = Greedy.run(g, c);
             greedyResult.print();
-            System.out.println("\n**************************************************************************\n");
-            
-//            lstResults = new ArrayList<>();
+//            System.out.println("\n**************************************************************************\n");
 //
-//            if (greedyResult.getRouteCost() != 0)
-//            	lstResults.add(greedyResult);
+////            lstResults = new ArrayList<>();
+////
+////            if (greedyResult.getRouteCost() != 0)
+////            	lstResults.add(greedyResult);
+////
+////            if (optResult.getRouteCost() != 0)
+////            	lstResults.add(optResult);
+////
+////            if (!lstResults.isEmpty())
+////            {
+////            	Comparator<AlgoResult> comparator = Comparator.comparing(AlgoResult::getRouteCost);
+////            	lstResults.sort(comparator);
+////
+////            	resultGraph.updateSlots(lstResults.get(0).getRoute(), c.getBandWidth());
+////            }
 //
-//            if (optResult.getRouteCost() != 0)
-//            	lstResults.add(optResult);
-//
-//            if (!lstResults.isEmpty())
-//            {
-//            	Comparator<AlgoResult> comparator = Comparator.comparing(AlgoResult::getRouteCost);
-//            	lstResults.sort(comparator);
-//
-//            	resultGraph.updateSlots(lstResults.get(0).getRoute(), c.getBandWidth());
-//            }
-            
             System.out.println("\n**************************************************************************\n");
         }
     }

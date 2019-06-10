@@ -6,10 +6,7 @@
 package finalproj;
 
 //import sun.istack.internal.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -17,129 +14,42 @@ import java.util.Set;
  */
 public final class Utilities
 {
-    // enterance: the function gets node and customer band width
-    // output: the function returns the cheapest available edge
-    public static Edge getCheapestEdge(Node node, int customerBandWidth, Edge eLastUsed)//, @Nullable Edge eLastUsed)
-    {
-        int minCost;
-        int minCostIndex;
-        List<Edge> copyNodeEdges = CreateCopyList(node.getEdges());
-        boolean isDone = false;
-        int i;
-
-        while (isDone == false)
-        {
-            isDone = true;
-            for (i = 0; i < copyNodeEdges.size(); i++)
-            {
-                if((eLastUsed != null && (eLastUsed.isEquals(copyNodeEdges.get(i)))) || (!(copyNodeEdges.get(i).getSlotCurrentUsage() + customerBandWidth <= copyNodeEdges.get(i).getTotalSlots())))
-                {
-                    isDone = false;
-                    break;
-                }
-            }
-            
-            if(isDone == false)
-            {
-                copyNodeEdges.remove(i);
-            }
-        }
-        
-        minCost = copyNodeEdges.get(0).getEdgeCost();
-        minCostIndex = 0;
-        
-        for(i = 1; i < copyNodeEdges.size(); i++)
-        {
-            if(copyNodeEdges.get(i).getEdgeCost() < minCost)
-            {
-                minCost = copyNodeEdges.get(i).getEdgeCost();
-                minCostIndex = i;
-            }
-        }
-        
-        if(!copyNodeEdges.isEmpty())
-        {
-            Edge e = node.getEdgeById(copyNodeEdges.get(minCostIndex).getId());
-            return e;
-        }
-        
-        return null;
-    }
-    
-    public static List<Edge> CreateCopyList(List<Edge> list)
-    {
-        List<Edge> newList = new ArrayList<Edge>();
-        
-        for(int i = 0; i < list.size(); i++)
-        {
-            newList.add(list.get(i));
-        }
-        
-        return newList;
-    }
-  
-    public static Edge getFirstEdge(Node node, int customerBandWidth,Edge eLastUsed)// @Nullable Edge eLastUsed)
-    {
-        List<Edge> copyNodeEdges = CreateCopyList(node.getEdges());
-        boolean isDone = false;
-        int i;
-
-        while (isDone == false)
-        {
-            isDone = true;
-            for (i = 0; i < copyNodeEdges.size(); i++)
-            {
-                if((eLastUsed != null && (eLastUsed.isEquals(copyNodeEdges.get(i)))) || (!(copyNodeEdges.get(i).getSlotCurrentUsage() + customerBandWidth <= copyNodeEdges.get(i).getTotalSlots())))
-                {
-                    isDone = false;
-                    break;
-                }
-            }
-            
-            if(isDone == false)
-            {
-                copyNodeEdges.remove(i);
-            }
-        }
-        
-        if(!copyNodeEdges.isEmpty())
-        {
-            Edge e = node.getEdgeById(copyNodeEdges.get(0).getId());
-            return e;
-        }
-        
-        return null;
-    }
-
     public static Graph getAvailableCapGraph(Graph oldG, int nCustomerBW)
     {
-        List<EdgeParameters> lstEP = new ArrayList<EdgeParameters>();
+        // Copy to avoid changing the original reference
+        List<Edge> lstE = new ArrayList<>(oldG.getEdges());
 
-        // Go over all edges in the graph
-        for (Edge e : oldG.getEdgeParametersList())
+        // Remove blocked paths
+        lstE.removeIf(x -> x.getSlot() == 1);
+
+        return new Graph(oldG.getDiscoverCost(), new ArrayList<Node>(oldG.getNodes()), lstE);
+    }
+
+    public static int getCheapestPathBetweenNodes(Graph g, Node n1, Node n2, int custBW)
+    {
+        int nSum = 0;
+        Comparator<Edge> edgeComparator = Comparator.comparing(Edge::getEdgeCost);
+
+        List<Edge> lstE = g.getEdgesBetweenNodes(n1, n2);
+        lstE.sort(edgeComparator);
+
+        if (custBW <= lstE.size())
         {
-            // Check if the current edge has enough
-            // capacity (bandwith) to transfer the customer
-            if (e.getTotalSlots() - e.getSlotCurrentUsage() >= nCustomerBW)
-            {
-                lstEP.add(new EdgeParameters(e.getNode1().getId(),
-                                             e.getNode2().getId(),
-                                             e.getEdgeCost(),
-                                             e.getTotalSlots()));
+            for (int i = 0; i < custBW; i++) {
+                nSum += lstE.get(i).getEdgeCost();
             }
         }
+        else{
+            nSum = -1;
+        }
 
-        return new Graph(oldG.getDiscoverCost(), lstEP);
+        return nSum;
     }
 
-    
-    public static boolean compareEdgeToEdgeParam(EdgeParameters ep, Edge e)
+    public static boolean checkNodeExist(List<Node> lstN, int nId)
     {
-    	return (((ep.getN1() == e.getNode1().getId() &&
-    			ep.getN2() == e.getNode2().getId()) || 
-    			(ep.getN1() == e.getNode2().getId() &&
-    	    	ep.getN2() == e.getNode1().getId())) &&
-    			ep.getEdgeCost() == e.getEdgeCost() &&
-    			ep.getNumOfSlots() == e.getTotalSlots());
+        return (lstN.stream().filter(o -> o.getId() == nId).findFirst().isPresent());
     }
 }
+
+

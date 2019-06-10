@@ -1,10 +1,6 @@
 package finalproj;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class Dijkstra {
 
@@ -13,21 +9,27 @@ public final class Dijkstra {
     private static HashMap<Integer, Integer> parents;
     private static List<Edge> lstEdges;
 
-    public static AlgoResult run(Graph graph, Customer customer){
-    	
-    	lstEdges = new ArrayList<Edge>();
-    	map = new HashMap<Node, Integer>();
-    	settled = new HashSet<Integer>();
-    	parents = new HashMap<Integer, Integer>();
+    public static AlgoResult run(Graph graph, Customer customer, boolean bKnowledge){
+
+        lstEdges = new ArrayList<Edge>();
+        map = new HashMap<Node, Integer>();
+        settled = new HashSet<Integer>();
+        parents = new HashMap<Integer, Integer>();
+        Graph newGraph;
 
         AlgoResult aResult = new AlgoResult(customer);
 
         // Rebuild graph with only available capacity
-        // TODO - Change func getAvailableCapGraph
-        Graph newGraph = graph; //Utilities.getAvailableCapGraph(graph, customer.getBandWidth());
+        if (bKnowledge)
+        {
+            newGraph = Utilities.getAvailableCapGraph(graph, customer.getBandWidth());
+        }
+        else {
+            newGraph = graph;
+        }
 
         // Initialize variables
-        int nNumberOfNodes = newGraph.getNumberOfNodes();
+        int nNumberOfNodes = newGraph.getNodes().size();
         Node nSource = newGraph.getNodeById(customer.getSourceId());
 
         // Add source node
@@ -42,81 +44,58 @@ public final class Dijkstra {
             // finalized
             settled.add(nMinimum.getId());
 
-            processNeighbors(nMinimum);
+            processNeighbors(nMinimum, customer.getBandWidth(), newGraph);
         }
 
-        aResult.setRouteCost(map.get(newGraph.getNodeById(customer.getTargerId())));
-        getRoute(customer.getTargerId(), aResult, newGraph);
+        aResult.setRouteCost(map.get(newGraph.getNodeById(customer.getTargetId())));
+        getRoute(customer.getTargetId(), aResult);
 
         return aResult;
     }
 
-    private static void processNeighbors(Node node)
+    private static void processNeighbors(Node node, int custBW, Graph graph)
     {
         int edgeDistance = -1;
         int newDistance = -1;
 
-        for (Edge e:node.getEdges()) {
-            Node curr = e.getOtherNode(node.getId());
+        for (Node curr : node.getNeighbors()) {
 
             // Check if we visited the current node already
             if (!settled.contains(curr.getId()))
             {
-                edgeDistance = e.getEdgeCost();
-                newDistance = map.get(node) + edgeDistance;
+                edgeDistance = Utilities.getCheapestPathBetweenNodes(graph, node, curr, custBW);
 
-                // Check if exist
-                if (map.containsKey(curr)) {
-                    // If new distance is cheaper in cost
-                    if (newDistance < map.get(curr)) {
+                if (edgeDistance != -1) {
+                    newDistance = map.get(node) + edgeDistance;
+
+                    // Check if exist
+                    if (map.containsKey(curr)) {
+                        // If new distance is cheaper in cost
+                        if (newDistance < map.get(curr)) {
+                            map.put(curr, newDistance);
+                            parents.put(curr.getId(), node.getId());
+                        }
+                    } else {
                         map.put(curr, newDistance);
                         parents.put(curr.getId(), node.getId());
-                        lstEdges.add(e);
                     }
-                }
-                else {
-                    map.put(curr, newDistance);
-                    parents.put(curr.getId(), node.getId());
-                    lstEdges.add(e);
                 }
             }
         }
     }
 
-    private static void getRoute(Integer nTargetId, AlgoResult a, Graph g)
+    private static void getRoute(int nTargetId, AlgoResult a)
     {
-        Integer curr = parents.get(nTargetId);
-        Edge edge = null;
-        
-        for (Edge e : lstEdges) {
-        	if ((nTargetId == e.getNode1().getId() && 
-				curr == e.getNode2().getId()) || 
-    			(nTargetId == e.getNode2().getId() && 
-				curr == e.getNode1().getId()))
-			{
-        		edge = e;
-        		break;
-			}
-        }
-        
-        a.addEdgeParameter(new EdgeParameters(nTargetId, curr, edge.getEdgeCost(), edge.getTotalSlots()));
+        int curr = parents.get(nTargetId);
+        a.addNode(nTargetId);
 
         while (curr != -1)
-        {    
-        	a.addEdgeParameter(new EdgeParameters(curr, parents.get(curr), edge.getEdgeCost(), edge.getTotalSlots()));
+        {
+            a.addNode(curr);
             curr = parents.get(curr);
-            
-        	for (Edge e : lstEdges) {
-	        	if ((nTargetId == e.getNode1().getId() && 
-					curr == e.getNode2().getId()) || 
-	    			(nTargetId == e.getNode2().getId() && 
-					curr == e.getNode1().getId()))
-				{
-	        		edge = e;
-	        		break;
-				}
-	        }
         }
+
+        Collections.reverse(a.getRoute());
     }
 
     private static Node findMinimumNode()

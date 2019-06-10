@@ -11,27 +11,32 @@ import java.util.List;
 
 /**
  *
- * @author Liron Levi
+ *
  */
 public class Node
 {
-    //private static int idCounter = 0;
-    
     private int id;
     private List<Edge> lstEdges;
     
     public Node(int id)
     {
-        this.lstEdges = new ArrayList<Edge>();
         this.id = id;
+        this.lstEdges = new ArrayList<Edge>();
     }
-    
+
+    public int getId()
+    {
+        return this.id;
+    }
+
+    public List<Edge> getEdges()
+    {
+        return this.lstEdges;
+    }
+
     public void addEdge(Edge newEdge) 
     {
-        if(!isEdgeExist(newEdge))
-        {
-            this.lstEdges.add(newEdge);
-        }
+        this.lstEdges.add(newEdge);
     }
 
     public void removeEdge(Edge delEdge)
@@ -59,50 +64,18 @@ public class Node
 
         return lst;
     }
-
-    public int getId()
-    {
-        return id;
-    }
     
-    public Edge getEdge(int i)
-    {
-        return this.lstEdges.get(i);
-    }
-    
-    public int getEdgeCount()
-    {
-        return this.lstEdges.size();
-    }
-    
-    public List<Edge> getEdges()
-    {
-        return this.lstEdges;
-    }
-    
-    public Edge getEdgeById(int id)
-    {
-        for(int i = 0; i < this.lstEdges.size(); i++)
-        {
-            if(this.lstEdges.get(i).getId() == id)
-            {
-                return this.lstEdges.get(i);
-            }
-        }
-        return null;
-    }
-    
-    public boolean isEdgeExist(Edge edge)
+    public boolean isEdgeExist(Edge e)
     {
         boolean isFound = false;
         
-        for(int i = 0; i < this.lstEdges.size() && isFound == false; i++)
+        for(int i = 0; i < this.lstEdges.size() && !isFound; i++)
         {
-            if(((this.lstEdges.get(i).getNode1().getId() == edge.getNode1().getId()  && 
-                 this.lstEdges.get(i).getNode2().getId() == edge.getNode2().getId()) || 
-                (this.lstEdges.get(i).getNode1().getId() == edge.getNode2().getId()  && 
-                 this.lstEdges.get(i).getNode2().getId() == edge.getNode1().getId())) &&
-                 this.lstEdges.get(i).getEdgeCost() == edge.getEdgeCost())
+            if(((this.lstEdges.get(i).getNode1().getId() == e.getNode1().getId()  &&
+                 this.lstEdges.get(i).getNode2().getId() == e.getNode2().getId()) ||
+                (this.lstEdges.get(i).getNode1().getId() == e.getNode2().getId()  &&
+                 this.lstEdges.get(i).getNode2().getId() == e.getNode1().getId())) &&
+                 this.lstEdges.get(i).getEdgeCost() == e.getEdgeCost())
             {
                 isFound = true;
             }
