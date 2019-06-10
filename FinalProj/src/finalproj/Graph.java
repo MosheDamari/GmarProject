@@ -7,6 +7,7 @@ package finalproj;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 /**
  *
@@ -15,9 +16,6 @@ import java.util.List;
 public class Graph
 {
     private int nDiscoverCost;
-    private int nGeneralCost; // num of edges * discovery cost + sum of each edge UseCost 
-    private int nSourceId;
-    private int nDestId;
     private List<Node> lstNodes;
     private List<Edge> lstEdges;
 
@@ -26,7 +24,6 @@ public class Graph
         this.lstEdges = new ArrayList<Edge>();
         this.lstNodes = new ArrayList<Node>();
         this.nDiscoverCost = nDiscoverCost;
-        this.nGeneralCost = 0; // will calc after graph creation: 
         
         for(int i = 0; i < edgeParameters.size(); i++)
         {
@@ -34,19 +31,31 @@ public class Graph
             Node n2 = new Node(edgeParameters.get(i).getN2());
             n1 = addNode(n1);
             n2 = addNode(n2);
-            Edge e1 = new Edge(edgeParameters.get(i).getNumOfSlots(), edgeParameters.get(i).getEdgeCost(), n1, n2);
-            addEdge(e1);
+
+            Edge e1;
+
+            for (int j = 0; j < edgeParameters.get(i).getNumOfSlots(); j++) {
+                e1 = new Edge(1, edgeParameters.get(i).getEdgeCost(), n1, n2);
+                addEdge(e1);
+            }
         }
     }
 
     public void addEdge(Edge newEdge)
     {
-        if(!isEdgeExist(newEdge))
-        {
+        //if(!isEdgeExist(newEdge))
+        //{
             this.lstEdges.add(newEdge);
             getNodeById(newEdge.getNode1().getId()).addEdge(newEdge);
             getNodeById(newEdge.getNode2().getId()).addEdge(newEdge);
-        }
+        //}
+    }
+
+    public void removeEdge(Edge delEdge)
+    {
+        this.lstEdges.remove(delEdge);
+        getNodeById(delEdge.getNode1().getId()).removeEdge(delEdge);
+        getNodeById(delEdge.getNode2().getId()).removeEdge(delEdge);
     }
     
     public boolean isEdgeExist(Edge edge)
@@ -161,6 +170,24 @@ public class Graph
         return (this.lstEdges.size());
     }
 
+    public List<Edge> getEdgesBetweenNodes(Node n1, Node n2)
+    {
+        List<Edge> lst = new ArrayList<Edge>();
+
+        for (Edge e : this.lstEdges)
+        {
+            if ((e.getNode1() == n1 &&
+                 e.getNode2() == n2) ||
+                (e.getNode1() == n2 &&
+                 e.getNode2() == n1))
+            {
+                lst.add(e);
+            }
+        }
+
+        return lst;
+    }
+
     public void updateSlots(List<EdgeParameters> lstEdgs, int custBandWidth)
     {
     	for (EdgeParameters ep : lstEdgs)
@@ -173,6 +200,60 @@ public class Graph
         		}
     		}
     	}
+    }
+
+    public Edge checkRoute(List<EdgeParameters> lstEdgs, int custBandWidth)
+    {
+        for (EdgeParameters ep : lstEdgs)
+        {
+            for (Edge e : this.getEdgeParametersList())
+            {
+                if (Utilities.compareEdgeToEdgeParam(ep, e))
+                {
+                    if ((e.getTotalSlots() - e.getSlotCurrentUsage()) < custBandWidth)
+                    {
+                        return e;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // Catch random slots in the graph by percentage
+    // parameter percentage is int between 0-1
+    public void CatchRandomSlots(int percentage)
+    {
+        List<Node> lstVisitedNodes = new ArrayList<Node>();
+        List<Edge> lstRelevantEdges;
+        Comparator<Edge> edgeComparator = Comparator.comparing(Edge::getEdgeCost);
+        int numOfEdgesToCatch;
+
+        // For each node in the graph
+        for (Node n : this.lstNodes)
+        {
+            lstVisitedNodes.add(n);
+
+            // Loop over his neighbors
+            for (Node nNeighbor : n.getNeighbors())
+            {
+                // If this node isn't visited already
+                if (!lstVisitedNodes.contains(nNeighbor))
+                {
+                    // Get the edges between those nodes, sort them by cost and catch some of them
+                    // by the percentage parameter
+                    lstRelevantEdges = this.getEdgesBetweenNodes(n, nNeighbor);
+                    lstRelevantEdges.sort(edgeComparator);
+                    numOfEdgesToCatch = (int)(lstRelevantEdges.size() * percentage);
+
+                    for (int i = 0; i < numOfEdgesToCatch; i++)
+                    {
+                        this.removeEdge(lstRelevantEdges.get(i));
+                    }
+                }
+            }
+        }
     }
     
 }

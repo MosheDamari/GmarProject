@@ -4,54 +4,28 @@ public final class Greedy{
 
     public static AlgoResult run(Graph graph, Customer customer)
     {
-        AlgoResult aResult = new AlgoResult(customer);
-        Node source = graph.getNodeById(customer.getSourceId());
-        Node target = graph.getNodeById(customer.getTargerId());
-        Edge tempEdge = null;
-        Node next = null;
-        boolean isBreaked = false;
+        boolean bIsAvailable = false;
+        AlgoResult djkResult = new AlgoResult(customer);
+        Edge unavailableEdge;
 
-        while (source.getId() != target.getId())
+        // Find the best route we can catch:
+        // 1. run dijkstra on the graph without the unavailable edge
+        // 2. check if we can catch this route
+        // 3. if not, remove the unavailable edge and do the while again
+        while (!bIsAvailable)
         {
-            tempEdge = Utilities.getCheapestEdge(source, customer.getBandWidth(), tempEdge);
+            djkResult = Dijkstra.run(graph, customer);
 
-            if(tempEdge != null)
-            {
-                if(tempEdge.getNode1().getId() == source.getId())
-                {
-                    next = tempEdge.getNode2();
-                }
-                else
-                {
-                    next = tempEdge.getNode1();
-                }
+            unavailableEdge = graph.checkRoute(djkResult.getRoute(), customer.getBandWidth());
+
+            if (unavailableEdge != null) {
+                graph.removeEdge(unavailableEdge);
             }
-
-            // check if all the edges are not available
-            // or (check if the next node is a leaf and not the target)
-            // cuz if it is the target we will get to it eventually
-            if(tempEdge == null || ( next != null && next.getEdgeCount() == 1 && next.getId() != target.getId()))
-            {
-                isBreaked = true;
-                break;
+            else {
+                bIsAvailable = true;
             }
-
-            aResult.addToCost(tempEdge.getEdgeCost());
-
-            graph.catchSlots(tempEdge, customer.getBandWidth());
-
-            aResult.addEdgeParameter(new EdgeParameters(tempEdge));
-
-            source = next;
         }
 
-        if(isBreaked == true)
-        {
-            //aResult.resetRoute();
-            aResult.setRouteCost(0);
-            graph.rollbackRoute(aResult.getRoute(), customer.getBandWidth());
-        }
-
-        return aResult;
+        return djkResult;
     }
 }

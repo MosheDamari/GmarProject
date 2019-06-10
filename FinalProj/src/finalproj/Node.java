@@ -6,6 +6,7 @@
 package finalproj;
 
 import java.util.ArrayList;
+import java.util.FormatFlagsConversionMismatchException;
 import java.util.List;
 
 /**
@@ -31,6 +32,32 @@ public class Node
         {
             this.lstEdges.add(newEdge);
         }
+    }
+
+    public void removeEdge(Edge delEdge)
+    {
+        if(isEdgeExist(delEdge))
+        {
+            this.lstEdges.remove(delEdge);
+        }
+    }
+
+    public List<Node> getNeighbors()
+    {
+        List<Node> lst = new ArrayList<Node>();
+        Node nOther;
+
+        for (Edge e : lstEdges)
+        {
+            nOther = e.getOtherNode(this.id);
+
+            if (!lst.contains(nOther))
+            {
+                lst.add(nOther);
+            }
+        }
+
+        return lst;
     }
 
     public int getId()

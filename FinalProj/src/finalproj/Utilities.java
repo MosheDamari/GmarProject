@@ -5,7 +5,7 @@
  */
 package finalproj;
 
-import com.sun.istack.internal.Nullable;
+//import sun.istack.internal.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +19,7 @@ public final class Utilities
 {
     // enterance: the function gets node and customer band width
     // output: the function returns the cheapest available edge
-    public static Edge getCheapestEdge(Node node, int customerBandWidth, @Nullable Edge eLastUsed)
+    public static Edge getCheapestEdge(Node node, int customerBandWidth, Edge eLastUsed)//, @Nullable Edge eLastUsed)
     {
         int minCost;
         int minCostIndex;
@@ -78,7 +78,7 @@ public final class Utilities
         return newList;
     }
   
-    public static Edge getFirstEdge(Node node, int customerBandWidth, @Nullable Edge eLastUsed)
+    public static Edge getFirstEdge(Node node, int customerBandWidth,Edge eLastUsed)// @Nullable Edge eLastUsed)
     {
         List<Edge> copyNodeEdges = CreateCopyList(node.getEdges());
         boolean isDone = false;

@@ -25,8 +25,6 @@ public final class FilesUtils {
 									                            Integer.parseInt(split[3]),
 									                            Integer.parseInt(split[2]));
             		lstEP.add(currEP);
-            		
-
             	} 
             });
         }

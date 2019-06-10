@@ -23,7 +23,8 @@ public final class Dijkstra {
         AlgoResult aResult = new AlgoResult(customer);
 
         // Rebuild graph with only available capacity
-        Graph newGraph = Utilities.getAvailableCapGraph(graph, customer.getBandWidth());
+        // TODO - Change func getAvailableCapGraph
+        Graph newGraph = graph; //Utilities.getAvailableCapGraph(graph, customer.getBandWidth());
 
         // Initialize variables
         int nNumberOfNodes = newGraph.getNumberOfNodes();
