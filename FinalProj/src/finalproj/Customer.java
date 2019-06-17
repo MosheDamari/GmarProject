@@ -43,4 +43,14 @@ public class Customer
     {
         return nBandWidth;
     }
+
+    public void setSourceId(int nSourceId)
+    {
+        this.nSourceId = nSourceId;
+    }
+
+    public void setTargetId(int nTargetId)
+    {
+        this.nTargetId = nTargetId;
+    }
 }

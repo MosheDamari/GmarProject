@@ -49,4 +49,18 @@ public class AlgoResult
             System.out.print(" -> " + this.route.get(i));
         }
     }
+    
+    public boolean isExist(Integer node) 
+    {
+        for (int i=0; i < this.route.size(); i++)
+        {
+            if(this.route.get(i) == node) 
+            {
+                return true;
+            }
+        }
+        return false;
+    
+    }
+    
 }

@@ -40,8 +40,11 @@ public class Main
             optResult.print();
             System.out.println("\n**************************************************************************\n");
 
-        	greedyResult = Greedy.run(g, c);
+        	greedyResult = GreedyPP.run(g, c);
+            System.out.println("Dor");
             greedyResult.print();
+                        System.out.println("Dor");
+
 //            System.out.println("\n**************************************************************************\n");
 //
 ////            lstResults = new ArrayList<>();
