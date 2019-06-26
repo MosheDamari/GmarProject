@@ -79,21 +79,61 @@ public class Graph
         return lst;
     }
 
+    // Check if we can route this path
     public List<Edge> checkRoute(HashMap<Integer, Integer> hRoute, int nCustBandWidth)
     {
         List<Edge> lstE;
+        List<Edge> lstVisitedEdges = new ArrayList<>();
 
+        Comparator<Edge> edgeComparator = Comparator.comparing(Edge::getEdgeCost);
+
+        // for each source in our path
         for (int nCurrNode : hRoute.keySet())
         {
+            // get the edges between the source and the destiny nodes and sort them by cost
             lstE = this.getEdgesBetweenNodes(this.getNodeById(nCurrNode), this.getNodeById(hRoute.get(nCurrNode)));
+            lstE.sort(edgeComparator);
 
-            if (lstE.size() - lstE.stream().mapToInt(x -> x.getSlot()).sum() < nCustBandWidth)
+            // check if we can navigate through each edge that our dijkstra found
+            // if not, one of the edges are catched, than return this unavailable edge
+            for (int i = 0; i < nCustBandWidth; i++)
             {
-                return lstE;
+                lstVisitedEdges.add(lstE.get(i));
+
+                if (lstE.get(i).getSlot() == 1)
+                {
+                    this.removeEdge(lstE.get(i));
+                    return lstVisitedEdges;
+                }
             }
         }
 
         return null;
+    }
+
+    public List<Edge> navigateThroughPath(HashMap<Integer, Integer> hRoute, int nCustBandWidth)
+    {
+        List<Edge> lstE;
+        List<Edge> lstVisitedEdges = new ArrayList<>();
+
+        Comparator<Edge> edgeComparator = Comparator.comparing(Edge::getEdgeCost);
+
+        // for each source in our path
+        for (int nCurrNode : hRoute.keySet())
+        {
+            // get the edges between the source and the destiny nodes and sort them by cost
+            lstE = this.getEdgesBetweenNodes(this.getNodeById(nCurrNode), this.getNodeById(hRoute.get(nCurrNode)));
+            lstE.sort(edgeComparator);
+
+            // check if we can navigate through each edge that our dijkstra found
+            // if not, one of the edges are catched, than return this unavailable edge
+            for (int i = 0; i < nCustBandWidth; i++)
+            {
+                lstVisitedEdges.add(lstE.get(i));
+            }
+        }
+
+        return lstVisitedEdges;
     }
 
     // Catch random slots in the graph by percentage
@@ -103,6 +143,8 @@ public class Graph
         List<Node> lstVisitedNodes = new ArrayList<Node>();
         List<Edge> lstRelevantEdges;
         Comparator<Edge> edgeComparator = Comparator.comparing(Edge::getEdgeCost);
+        int nNumOfConns = Utilities.getNumOfConnections(this);
+        List<Double> lstPercentages = Utilities.getRandomPercentages(percentage, nNumOfConns);
         int numOfEdgesToCatch;
 
         // For each node in the graph
@@ -120,7 +162,7 @@ public class Graph
                     // by the percentage parameter
                     lstRelevantEdges = this.getEdgesBetweenNodes(n, nNeighbor);
                     lstRelevantEdges.sort(edgeComparator);
-                    numOfEdgesToCatch = (int)(lstRelevantEdges.size() * percentage);
+                    numOfEdgesToCatch = (int)(lstRelevantEdges.size() * lstPercentages.remove(0));
 
                     for (int i = 0; i < numOfEdgesToCatch; i++)
                     {

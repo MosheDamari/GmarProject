@@ -1,19 +1,17 @@
 package finalproj;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public final class Greedy{
 
     public static AlgoResult run(Graph g, Customer customer)
     {
-        int nParent;
+        int nParent, nSearchCost = 0;
         LinkedHashMap<Integer, Integer> currRoute;
         boolean bIsAvailable = false;
         AlgoResult djkResult = new AlgoResult(customer);
         List<Edge> unavailableEdges;
+        List<Edge> lstVisitedEdges = new ArrayList<>();
 
         // Create copy to not damage the original
         Graph graph = new Graph(g);
@@ -38,13 +36,17 @@ public final class Greedy{
             unavailableEdges = graph.checkRoute(currRoute, customer.getBandWidth());
 
             if (unavailableEdges != null) {
-                unavailableEdges.stream().forEach(x -> graph.removeEdge(x));
+                lstVisitedEdges.addAll(unavailableEdges);
             }
             else {
                 bIsAvailable = true;
+                lstVisitedEdges.addAll(graph.navigateThroughPath(currRoute, customer.getBandWidth()));
             }
         }
 
+        nSearchCost += lstVisitedEdges.size();
+
+        djkResult.setTotalCost(djkResult.getRouteCost() + nSearchCost);
         return djkResult;
     }
 }

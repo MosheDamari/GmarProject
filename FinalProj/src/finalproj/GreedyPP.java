@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class GreedyPP{
 
-    public static AlgoResult run(Graph g, Customer customer)
+/*    public static AlgoResult run(Graph g, Customer customer)
     {
         int nParent;
         LinkedHashMap<Integer, Integer> currRoute;
@@ -40,7 +40,7 @@ public final class GreedyPP{
                 nParent = djkResult.getRoute().get(i);
             }
 
-            unavailableEdges = graph.checkRoute(currRoute, customer.getBandWidth());
+            unavailableEdge = graph.checkRoute(currRoute, customer.getBandWidth());
 
             if (unavailableEdges != null) {
                 
@@ -99,5 +99,5 @@ public final class GreedyPP{
         }
 
         return djkRealResult;
-    }
+    }*/
 }

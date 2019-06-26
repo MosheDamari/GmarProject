@@ -18,12 +18,14 @@ public class AlgoResult
 {
     private Customer customer;
     private int nRouteCost;
+    private int nTotalCost;
     private List<Integer> route;
 
     public AlgoResult(Customer customer)
     {
         this.customer = new Customer(customer);
         this.nRouteCost = 0;
+        this.nTotalCost = 0;
         this.route = new ArrayList<>();
     }
 
@@ -31,7 +33,11 @@ public class AlgoResult
 
     public int getRouteCost() { return this.nRouteCost; }
 
+    public int getnTotalCost() { return this.nTotalCost; }
+
     public void setRouteCost(int routeCost) { this.nRouteCost = routeCost; }
+
+    public void setTotalCost(int totalCost) { this.nTotalCost = totalCost; }
 
     public List<Integer> getRoute(){ return this.route; }
 
@@ -42,7 +48,8 @@ public class AlgoResult
 
     public void print()
     {
-        System.out.println("Cost: " + this.nRouteCost);
+        System.out.println("Route Cost: " + this.nRouteCost);
+        System.out.println("Total Cost: " + this.nTotalCost);
         System.out.print("Route: ");
         System.out.print(this.route.get(0));
         for (int i = 1; i < this.route.size(); i++) {

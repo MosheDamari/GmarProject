@@ -34,6 +34,8 @@ public class Edge
         return this.nEdgeCost;
     }
 
+    public void setEdgeCost(int nEdgeCost) { this.nEdgeCost = nEdgeCost; }
+
     public Node getNode1() { return this.node1; }
 
     public Node getNode2() { return this.node2; }

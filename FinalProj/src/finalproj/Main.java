@@ -40,29 +40,10 @@ public class Main
             optResult.print();
             System.out.println("\n**************************************************************************\n");
 
-        	greedyResult = GreedyPP.run(g, c);
-            System.out.println("Dor");
-            greedyResult.print();
-                        System.out.println("Dor");
+        	greedyResult = Greedy.run(g, c);
 
-//            System.out.println("\n**************************************************************************\n");
-//
-////            lstResults = new ArrayList<>();
-////
-////            if (greedyResult.getRouteCost() != 0)
-////            	lstResults.add(greedyResult);
-////
-////            if (optResult.getRouteCost() != 0)
-////            	lstResults.add(optResult);
-////
-////            if (!lstResults.isEmpty())
-////            {
-////            	Comparator<AlgoResult> comparator = Comparator.comparing(AlgoResult::getRouteCost);
-////            	lstResults.sort(comparator);
-////
-////            	resultGraph.updateSlots(lstResults.get(0).getRoute(), c.getBandWidth());
-////            }
-//
+            greedyResult.print();
+
             System.out.println("\n**************************************************************************\n");
         }
     }

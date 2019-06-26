@@ -50,6 +50,67 @@ public final class Utilities
     {
         return (lstN.stream().filter(o -> o.getId() == nId).findFirst().isPresent());
     }
+
+    // Return the number of connections between nodes in the graph
+    // If between two nodes there is more then one edge it will be counted as one connection
+    public static int getNumOfConnections(Graph g)
+    {
+        List<Node> lstNodes = g.getNodes();
+        List<Node> lstVisitedNodes = new ArrayList<>();
+        int nCounter = 0;
+
+        for (Node n : lstNodes)
+        {
+            lstVisitedNodes.add(n);
+
+            for (Node nNeighbor : n.getNeighbors())
+            {
+                if (!lstVisitedNodes.contains(nNeighbor))
+                {
+                    nCounter++;
+                }
+            }
+        }
+
+        return nCounter;
+    }
+
+    // Get an array of random numbers with specific average
+    // Parameters: nExpectedPercentage - the average we want to achieve
+    //             nNumOfConns         - the number of connections in our graph (edges)
+    // Return:
+    //             lstPercentages      - List of percentages between 0 to 1
+    public static ArrayList<Double> getRandomPercentages(int nExpectedPercentage, int nNumOfConns)
+    {
+        ArrayList<Double> lstPercentages = new ArrayList<>();
+        Random rnd = new Random();
+        int nNumToRand, nRandomNumber, nMaxRand, nMinRand;
+
+        // Find our borders to satisfy our expected average
+        nMaxRand = Math.min(100, nExpectedPercentage * 2);
+        nMinRand = Math.max(0, nExpectedPercentage - (100-nExpectedPercentage));
+
+        // Random half of the connections
+        nNumToRand = nNumOfConns / 2;
+
+        // If its an odd number
+        if (nNumOfConns % 2 != 0)
+        {
+            lstPercentages.add((double)(nExpectedPercentage / 100));
+        }
+
+        // loop to random
+        for(int i = 0; i < nNumToRand; i++)
+        {
+            nRandomNumber = rnd.nextInt(nMaxRand - nMinRand) - nMinRand;
+            lstPercentages.add((double)(nRandomNumber / 100));
+
+            // for each random number add his inverse number
+            lstPercentages.add((double)(nExpectedPercentage-(nRandomNumber - nExpectedPercentage) / 100));
+        }
+
+        return lstPercentages;
+    }
 }
 
 

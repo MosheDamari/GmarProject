@@ -18,7 +18,7 @@ public final class FilesUtils {
 
         try {
             // Try to read from the topology file
-            Files.lines(Paths.get("D:\\Repositories\\try\\GmarProject\\FinalProj\\files\\newTopology.txt")).forEach((line) -> {
+            Files.lines(Paths.get("C:\\Users\\ohade\\Desktop\\limudim\\GmarProject\\FinalProj\\files\\newTopology.txt")).forEach((line) -> {
                 if (line.matches(".*\\d.*")) {
             		String[] split = line.substring(1, line.indexOf("]")).split(",");
                     Node newN1;
@@ -75,7 +75,7 @@ public final class FilesUtils {
 
         try {
             // Try to read from the customers file
-                        Files.lines(Paths.get("D:\\Repositories\\try\\GmarProject\\FinalProj\\files\\newCust.txt")).forEach((line) -> {
+                        Files.lines(Paths.get("C:\\Users\\ohade\\Desktop\\limudim\\GmarProject\\FinalProj\\files\\newCust.txt")).forEach((line) -> {
 //Files.lines(Paths.get(System.getProperty("user.dir") + "\\FinalProj\\files\\newCust.txt")).forEach((line) -> {
                             	if (line.matches(".*\\d.*")) {
 	                String[] split = line.substring(1, line.indexOf("]")).split(",");

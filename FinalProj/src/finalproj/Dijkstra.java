@@ -48,6 +48,7 @@ public final class Dijkstra {
         }
 
         aResult.setRouteCost(map.get(newGraph.getNodeById(customer.getTargetId())));
+        aResult.setTotalCost(aResult.getRouteCost());
         getRoute(customer.getTargetId(), aResult);
 
         return aResult;
