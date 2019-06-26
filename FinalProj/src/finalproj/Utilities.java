@@ -96,17 +96,18 @@ public final class Utilities
         // If its an odd number
         if (nNumOfConns % 2 != 0)
         {
-            lstPercentages.add((double)(nExpectedPercentage / 100));
+            double ohad = (double)nExpectedPercentage / 100;
+            lstPercentages.add(ohad);
         }
 
         // loop to random
         for(int i = 0; i < nNumToRand; i++)
         {
-            nRandomNumber = rnd.nextInt(nMaxRand - nMinRand) - nMinRand;
-            lstPercentages.add((double)(nRandomNumber / 100));
+            nRandomNumber = rnd.nextInt(nMaxRand - nMinRand) + nMinRand;
+            lstPercentages.add((double)nRandomNumber / 100);
 
             // for each random number add his inverse number
-            lstPercentages.add((double)(nExpectedPercentage-(nRandomNumber - nExpectedPercentage) / 100));
+            lstPercentages.add((double)(nExpectedPercentage-(nRandomNumber - nExpectedPercentage)) / 100);
         }
 
         return lstPercentages;

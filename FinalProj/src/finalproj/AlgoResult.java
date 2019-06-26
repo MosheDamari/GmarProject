@@ -33,7 +33,7 @@ public class AlgoResult
 
     public int getRouteCost() { return this.nRouteCost; }
 
-    public int getnTotalCost() { return this.nTotalCost; }
+    public int getTotalCost() { return this.nTotalCost; }
 
     public void setRouteCost(int routeCost) { this.nRouteCost = routeCost; }
 

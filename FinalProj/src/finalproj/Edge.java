@@ -29,6 +29,8 @@ public class Edge
         return this.nSlot;
     }
 
+    public void setSlot(int nSlot) { this.nSlot = nSlot; }
+
     public int getEdgeCost()
     {
         return this.nEdgeCost;

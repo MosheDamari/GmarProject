@@ -14,14 +14,13 @@ import java.util.*;
  */
 public class Main
 {
-
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException
     {
-        AlgoResult greedyResult, optResult;
-//        List<AlgoResult> lstResults;
+        AlgoResult optResult, greedyResult, statisticResult;
+        List<String> arrCurrFile = new ArrayList<>();
 
         // Read the topology and build the graph
         Graph g = FilesUtils.readGraph();
@@ -29,22 +28,41 @@ public class Main
         // Get the customers data
         List<Customer> lstC = FilesUtils.readCustomers();
 
-        // Print the current graph - for debug
-        g.printGraph();
-        System.out.println("\n**************************************************************************\n");
+        // Read cap slots
+        List<Integer> lstSC = FilesUtils.readSlotCaps();
 
-        // Iterate over the customers and run the algorithms
-        for (Customer c : lstC)
+        // Go over all percentages and calc all algorithms
+        for (Integer currPercentage : lstSC)
         {
-            optResult = Dijkstra.run(g, c, true);
-            optResult.print();
-            System.out.println("\n**************************************************************************\n");
+            Graph gCurrPer = new Graph(g);
+            Double point = (double)currPercentage / 100;
 
-        	greedyResult = Greedy.run(g, c);
+            // Catch slots in the graph by percentage
+            gCurrPer.catchRandomSlots(point);
 
-            greedyResult.print();
+            // Iterate over the customers and run the algorithms
+            for (Customer c : lstC)
+            {
+                optResult = Dijkstra.run(gCurrPer, c, true);
+                optResult.print();
+                System.out.println("\n**************************************************************************\n");
 
-            System.out.println("\n**************************************************************************\n");
+                greedyResult = Greedy.run(gCurrPer, c);
+                greedyResult.print();
+                System.out.println("\n**************************************************************************\n");
+
+                statisticResult = Statistic.run(gCurrPer, c);
+                statisticResult.print();
+                System.out.println("\n**************************************************************************\n");
+
+                arrCurrFile.add(optResult.getTotalCost()+ "\t" +
+                                greedyResult.getTotalCost() + "\t" +
+                                statisticResult.getTotalCost());
+            }
+
+            // Write result to file
+            FilesUtils.writeResult(arrCurrFile, currPercentage.toString());
+            arrCurrFile.clear();
         }
     }
 }

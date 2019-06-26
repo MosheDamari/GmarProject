@@ -138,13 +138,14 @@ public class Graph
 
     // Catch random slots in the graph by percentage
     // parameter percentage is int between 0-1
-    public void CatchRandomSlots(int percentage)
+    public void catchRandomSlots(double percentage)
     {
         List<Node> lstVisitedNodes = new ArrayList<Node>();
         List<Edge> lstRelevantEdges;
         Comparator<Edge> edgeComparator = Comparator.comparing(Edge::getEdgeCost);
         int nNumOfConns = Utilities.getNumOfConnections(this);
-        List<Double> lstPercentages = Utilities.getRandomPercentages(percentage, nNumOfConns);
+        int perc = (int)(percentage * 100);
+        List<Double> lstPercentages = Utilities.getRandomPercentages(perc, nNumOfConns);
         int numOfEdgesToCatch;
 
         // For each node in the graph
@@ -166,7 +167,7 @@ public class Graph
 
                     for (int i = 0; i < numOfEdgesToCatch; i++)
                     {
-                        this.removeEdge(lstRelevantEdges.get(i));
+                        lstRelevantEdges.get(i).setSlot(1);
                     }
                 }
             }
