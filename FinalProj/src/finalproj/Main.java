@@ -24,7 +24,7 @@ public class Main
 
         // Read the topology and build the graph
         Graph g = FilesUtils.readGraph();
-
+        
         // Get the customers data
         List<Customer> lstC = FilesUtils.readCustomers();
 
@@ -63,6 +63,15 @@ public class Main
             // Write result to file
             FilesUtils.writeResult(arrCurrFile, currPercentage.toString());
             arrCurrFile.clear();
+            
+          
+           
         }
+        
+        // Liron And Kim check Decision Tree
+//            System.out.println("");
+//          Graph g2 = FilesUtils.readGraph2();
+//          
+//          g2.getDecisionTree(1, 4, new ArrayList<>()).printTree();
     }
 }

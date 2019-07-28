@@ -5,10 +5,12 @@
  */
 package finalproj;
 
+import com.sun.istack.internal.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  *
@@ -173,6 +175,114 @@ public class Graph
             }
         }
     }
+
+    public TreeNode getDecisionTree(int sourceID, int targetID, List<Integer> ancestors)
+    {
+        TreeNode treenode = new TreeNode(sourceID);
+        List<Integer> children;
+        List<Integer> walkThroughNodes = new ArrayList<>();
+        TreeNode currentChild;
+        
+        if(sourceID == targetID)
+        {
+            return treenode;
+        }
+        
+        for (Integer ancestor : ancestors)
+        {
+            walkThroughNodes.add(ancestor);
+        }
+        
+        children = getNeighbors(sourceID, ancestors);
+        
+        walkThroughNodes.add(sourceID);
+        children.sort(Comparator.naturalOrder());
+        for (Integer child : children)
+        {
+            currentChild = getDecisionTree(child, targetID, walkThroughNodes);
+            treenode.AddChild(currentChild);
+            treenode.setAncestors(walkThroughNodes);
+        }
+        
+        return treenode;
+    }
     
+    public List<Integer> getNeighbors(int source, List<Integer> walkThroughNodes)
+    {
+        List<Integer> closestNodes = new ArrayList<>();
+        List<Integer> newWalkThroughNodes = new ArrayList<>();
+        List<Integer> recursionResult = new ArrayList<>();
+        List<Integer> totalResults = new ArrayList<>();
+        Node ndSource = getNodeById(source);
+        boolean isLocated = false;
+                
+        for(int i = 0; i < ndSource.getEdges().size(); i++)
+        {
+            if(ndSource.getEdges().get(i).getNode1().getId() != source)
+            {
+                closestNodes.add(ndSource.getEdges().get(i).getNode1().getId());
+            }
+            else
+            {
+                closestNodes.add(ndSource.getEdges().get(i).getNode2().getId());
+            }
+        }
+        
+        if(walkThroughNodes.isEmpty())
+        {
+            return closestNodes;
+        }
+        
+        for (Integer walkThroughNode : walkThroughNodes)
+        {
+            for (Integer closestNode : closestNodes)
+            {
+                if(Objects.equals(closestNode, walkThroughNode))
+                {
+                    isLocated = true;
+                }
+            }
+            
+            if(isLocated == false)
+            {
+                newWalkThroughNodes.add(walkThroughNode);
+            }
+            
+            isLocated = false;
+        }
+        
+        for (Integer closestNode : closestNodes)
+        {
+            if(walkThroughNodes.contains(closestNode))
+            {
+                recursionResult = getNeighbors(closestNode, newWalkThroughNodes);
+                
+                for (Integer recursionResult1 : recursionResult)
+                {
+                    totalResults.add(recursionResult1);
+                }
+            }
+        }
+        
+        for (Integer closestNode : closestNodes)
+        {
+            totalResults.add(closestNode);
+        }
+        
+        while(totalResults.contains(source))
+        {
+            totalResults.remove((Integer)source);
+        }
+                
+        for (Integer walkThroughNode : walkThroughNodes)
+        {
+            while(totalResults.contains(walkThroughNode))
+            {
+                totalResults.remove(walkThroughNode);
+            }
+        }
+        
+        return totalResults;
+    }
 }
 

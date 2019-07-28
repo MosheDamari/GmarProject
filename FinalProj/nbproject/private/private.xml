@@ -4,10 +4,15 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/Main.java</file>
+            <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/GreedyPP.java</file>
+            <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/FilesUtils.java</file>
             <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/Node.java</file>
             <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/Graph.java</file>
-            <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/EdgeParameters.java</file>
+            <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/Greedy.java</file>
             <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/Edge.java</file>
+            <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/Dijkstra.java</file>
+            <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/AlgoResult.java</file>
+            <file>file:/D:/Repositories/try/GmarProject/FinalProj/src/finalproj/Customer.java</file>
         </group>
     </open-files>
 </project-private>
