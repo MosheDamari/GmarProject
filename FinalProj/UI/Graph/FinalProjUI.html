@@ -1,0 +1,267 @@
+<!-- run chrome with these flags : "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --disable-gpu --user-data-dir=~/chromeTemp -->
+<!-- // [
+//   [1,2,3,4],
+//   [1,7,20,5],
+//   [5,9,10,2]
+// ] -->
+<!-- START SIGMA IMPORTS -->
+<script src="../Graph/src/sigma.core.js"></script>
+<script src="../Graph/src/conrad.js"></script>
+<script src="../Graph/src/utils/sigma.utils.js"></script>
+<script src="../Graph/src/utils/sigma.polyfills.js"></script>
+<script src="../Graph/src/sigma.settings.js"></script>
+<script src="../Graph/src/classes/sigma.classes.dispatcher.js"></script>
+<script src="../Graph/src/classes/sigma.classes.configurable.js"></script>
+<script src="../Graph/src/classes/sigma.classes.graph.js"></script>
+<script src="../Graph/src/classes/sigma.classes.camera.js"></script>
+<script src="../Graph/src/classes/sigma.classes.quad.js"></script>
+<script src="../Graph/src/classes/sigma.classes.edgequad.js"></script>
+<script src="../Graph/src/captors/sigma.captors.mouse.js"></script>
+<script src="../Graph/src/captors/sigma.captors.touch.js"></script>
+<script src="../Graph/src/renderers/sigma.renderers.canvas.js"></script>
+<script src="../Graph/src/renderers/sigma.renderers.webgl.js"></script>
+<script src="../Graph/src/renderers/sigma.renderers.svg.js"></script>
+<script src="../Graph/src/renderers/sigma.renderers.def.js"></script>
+<script src="../Graph/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+<script src="../Graph/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+<script src="../Graph/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+<script src="../Graph/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+<script src="../Graph/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="../Graph/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+<script src="../Graph/src/renderers/svg/sigma.svg.utils.js"></script>
+<script src="../Graph/src/renderers/svg/sigma.svg.nodes.def.js"></script>
+<script src="../Graph/src/renderers/svg/sigma.svg.edges.def.js"></script>
+<script src="../Graph/src/renderers/svg/sigma.svg.edges.curve.js"></script>
+<script src="../Graph/src/renderers/svg/sigma.svg.labels.def.js"></script>
+<script src="../Graph/src/renderers/svg/sigma.svg.hovers.def.js"></script>
+<script src="../Graph/src/middlewares/sigma.middlewares.rescale.js"></script>
+<script src="../Graph/src/middlewares/sigma.middlewares.copy.js"></script>
+<script src="../Graph/src/misc/sigma.misc.animation.js"></script>
+<script src="../Graph/src/misc/sigma.misc.bindEvents.js"></script>
+<script src="../Graph/src/misc/sigma.misc.bindDOMEvents.js"></script>
+<script src="../Graph/src/misc/sigma.misc.drawHovers.js"></script>
+<!-- END SIGMA IMPORTS -->
+<script src="../Graph/plugins/sigma.renderers.edgeLabels/settings.js"></script>
+<script src="../Graph/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.def.js"></script>
+<script src="../Graph/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.curve.js"></script>
+<script src="../Graph/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.curvedArrow.js"></script>
+<div id="container">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    }
+
+    #graph-container {
+      top: 5%;
+      bottom: 25%;
+      left: 25%;
+      right: 25%;
+      position: absolute;
+      background: #fff;
+    }
+
+    #container {
+      position: relative;
+      /* top: 0;
+      left: 0;
+      right: 0; */
+      height: 100%;
+      background: #ccc;
+    }
+
+    .description {
+      vertical-align: 0%
+    }
+  </style>
+  <center>
+    <span class="description">
+
+    </span>
+  </center>
+  <div id="graph-container"></div>
+</div>
+<script>
+  var data;
+  var parsedData;
+  var edgeCount = 0;
+
+  function buildGraph() {
+    parsedData.forEach(topology => {
+      if (!g.nodes.find(nd => nd.id === 'n' + topology[0])) {
+        g.nodes.push({
+          id: 'n' + topology[0],
+          label: 'Node ' + topology[0],
+          x: Math.random(),
+          y: Math.random(),
+          size: 10,
+          color: '#ff0000'
+        })
+      }
+
+      if (!g.nodes.find(nd => nd.id === 'n' + topology[1])) {
+        g.nodes.push({
+          id: 'n' + topology[1],
+          label: 'Node ' + topology[1],
+          x: Math.random(),
+          y: Math.random(),
+          size: 10,
+          color: '#ff0000'
+        })
+      }
+    });
+
+    parsedData.forEach(topology => {
+      edgeCount++;
+      g.edges.push({
+        id: 'e' + edgeCount,
+        label: 'Edge:' + edgeCount + ', BW: ' + topology[2] + ', Cost: ' + topology[3],
+        source: 'n' + topology[0],
+        target: 'n' + topology[1],
+        size: topology[2],
+        color: '#54ff00',
+        // type: ['line', 'curve', 'arrow', 'curvedArrow'][Math.random() * 4 | 0]
+        type: 'curve',
+        minArrowSize: 300
+      });
+    });
+
+    // Instantiate sigma:
+    s = new sigma({
+      graph: g,
+      renderer: {
+        container: document.getElementById('graph-container'),
+        type: 'canvas'
+      },
+      settings: {
+        edgeLabelSize: 'proportional'
+      }
+    });
+  }
+
+
+  function readTextFile(file) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file);
+    rawFile.onreadystatechange = function () {
+      if (rawFile.readyState === 4) {
+        if (rawFile.status === 200 || rawFile.status == 0) {
+          var allText = rawFile.responseText;
+          data = allText;
+          parsedData = JSON.parse(data);
+          buildGraph();
+        }
+      }
+    }
+    rawFile.send(null);
+  }
+
+  // readTextFile("file:///UI/Graph/data.txt");
+  // readResultFile("file:///../Graph//result.txt");
+
+  readTextFile("../Graph/data.txt");
+  setTimeout(() => {
+    readResultFile("../Graph//result.txt");
+  }, 5000);
+
+
+  var result;
+  var parsedResult;
+  var totalCost = []
+  var colorArr = ["#FF0000", "#659DBD", "#DAAD86", "BC986A"]
+
+  function readResultFile(file) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file);
+    rawFile.onreadystatechange = function () {
+      if (rawFile.readyState === 4) {
+        if (rawFile.status === 200 || rawFile.status == 0) {
+          var allText = rawFile.responseText;
+          result = allText;
+          parsedResult = JSON.parse(result);
+          updateGraph()
+        }
+      }
+    }
+    rawFile.send(null);
+  }
+
+  function updateGraph() {
+    parsedResult.forEach(res => {
+      var currColor = colorArr[res[4]]
+      var firstNode = res[0];
+      var secondNode = res[1];
+      // totalCost[res[4]] = totalCost[res[4]] + res[3] || res[3]
+
+      if (totalCost[res[4]] !== undefined) {
+        var currCost = (totalCost[res[4]].totalCost + res[3])
+      }
+
+      totalCost[res[4]] = {
+        'id': res[4],
+        'totalCost': currCost || res[3]
+      }
+
+      var currEdge = s.graph.edges().find(e => e.source == 'n' + firstNode && e.target == 'n' + secondNode)
+
+      if (currEdge) {
+        s.graph.dropEdge(currEdge.id)
+        currEdge.color = currColor;
+        s.graph.addEdge(currEdge);
+        s.refresh();
+      }
+    })
+    totalCost.forEach(customer => {
+      document.querySelector(".description").append("Customer " + customer.id + ": " + customer.totalCost + "\n")
+
+    })
+  }
+
+
+
+
+  var i,
+    s,
+    N = 10,
+    E = 30,
+    g = {
+      nodes: [],
+      edges: []
+    };
+
+
+  // // Generate a random graph:
+  // for (i = 0; i < N; i++)
+  //   g.nodes.push({
+  //     id: 'n' + i,
+  //     label: 'Node ' + i,
+  //     x: Math.random(),
+  //     y: Math.random(),
+  //     size: Math.random(),
+  //     color: '#666'
+  //   });
+
+  // for (i = 0; i < E; i++)
+  //   g.edges.push({
+  //     id: 'e' + i,
+  //     label: 'Edge ' + i + ' cost: ',
+  //     source: 'n' + (Math.random() * N | 0),
+  //     target: 'n' + (Math.random() * N | 0),
+  //     size: Math.random(),
+  //     color: '#ccc',
+  //     type: ['line', 'curve', 'arrow', 'curvedArrow'][Math.random() * 4 | 0]
+  //   });
+
+
+</script>
