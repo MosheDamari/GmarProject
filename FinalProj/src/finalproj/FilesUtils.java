@@ -78,7 +78,7 @@ public final class FilesUtils {
 
         try {
             // Try to read from the topology file
-            Files.lines(Paths.get("D:\\Repositories\\try\\GmarProject\\FinalProj\\files\\DecisionTreeCheck.txt")).forEach((line) -> {
+            Files.lines(Paths.get("D:\\limudim\\GmarProject\\FinalProj\\files\\DecisionTreeCheck.txt")).forEach((line) -> {
                 if (line.matches(".*\\d.*")) {
             		String[] split = line.substring(1, line.indexOf("]")).split(",");
                     Node newN1;

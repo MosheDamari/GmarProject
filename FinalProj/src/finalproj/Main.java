@@ -69,9 +69,12 @@ public class Main
         }
         
         // Liron And Kim check Decision Tree
-//            System.out.println("");
-//          Graph g2 = FilesUtils.readGraph2();
+           System.out.println("");
+          Graph g2 = FilesUtils.readGraph2();
 //          
-//          g2.getDecisionTree(1, 4, new ArrayList<>()).printTree();
+          TreeNode tr = g2.getDecisionTree(1, 0, 4, new ArrayList<>());
+          tr.setTreeCost(tr, true, new ArrayList<>(), new ArrayList<>(), 1, 4);
+          double minCost = tr.getBestPathCost(tr);
+          tr.printTree();
     }
 }

@@ -5,7 +5,7 @@
  */
 package finalproj;
 
-import com.sun.istack.internal.Nullable;
+//import com.sun.istack.internal.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -176,73 +176,171 @@ public class Graph
         }
     }
 
-    public TreeNode getDecisionTree(int sourceID, int targetID, List<Integer> ancestors)
+    public TreeNode getDecisionTree(int sourceID, int parentId, int targetID, List<Integer> ancestors)
     {
-        TreeNode treenode = new TreeNode(sourceID);
-        List<Integer> children;
+        TreeNode treenode = new TreeNode(sourceID, parentId);
+        List<IntPair> children;
         List<Integer> walkThroughNodes = new ArrayList<>();
         TreeNode currentChild;
-        
+
+        // if source equals target, return
         if(sourceID == targetID)
         {
             return treenode;
         }
-        
+
         for (Integer ancestor : ancestors)
         {
             walkThroughNodes.add(ancestor);
         }
-        
+
+        // Get neighbors of the source with his ancestors
         children = getNeighbors(sourceID, ancestors);
         
         walkThroughNodes.add(sourceID);
-        children.sort(Comparator.naturalOrder());
-        for (Integer child : children)
+        //children.sort(Comparator.naturalOrder());
+        for (IntPair child : children)
         {
-            currentChild = getDecisionTree(child, targetID, walkThroughNodes);
-            treenode.AddChild(currentChild);
+            boolean bIsFound = false;
+            TreeNode trChild = new TreeNode(child.n1, child.n2);
+            trChild.setCost(1);
+
+            if (child.n1 == targetID)
+            {
+                List<IntPair> brothers = new ArrayList<>();
+
+                for (IntPair ipBrothers : children)
+                {
+                    if (!ipBrothers.equals(child))
+                    {
+                        brothers.add(ipBrothers);
+                    }
+                }
+
+                currentChild = getEndTree(child.n1, child.n2, brothers ,walkThroughNodes);
+            }
+            else
+                currentChild = getDecisionTree(child.n1, child.n2, targetID, walkThroughNodes);
+
+            for (IntPair tmpChild: children)
+            {
+                if (tmpChild.n1 == child.n1 && tmpChild.n2 != child.n2)
+                {
+                    bIsFound = true;
+                }
+            }
+
+            if (bIsFound)
+            {
+                if (this.getNodeById(child.n1).getDiffEdges(this.getNodeById(child.n2)).isEmpty())
+                {
+                    currentChild.setCost(1);
+                    TreeNode trCopy = currentChild.getCopy();
+                    trCopy.setCost(1);
+                    trChild.AddChild(trCopy);
+                }
+                else {
+                    for (Integer i : this.getNodeById(child.n1).getDiffEdges(this.getNodeById(child.n2)))
+                    {
+                        TreeNode trCopy = currentChild.getCopy();
+                        trCopy.setChance(this.getNodeById(child.n1).getNumOfEdgesByCost(this.getNodeById(child.n2), i));
+                        trCopy.setCost(i);
+                        trChild.AddChild(trCopy);
+                    }
+                }
+            }
+            else
+            {
+                if (this.getNodeById(child.n1).getDiffEdges(this.getNodeById(sourceID)).isEmpty())
+                {
+                    for (Integer i : this.getNodeById(child.n1).getDiffEdges(this.getNodeById(child.n2)))
+                    {
+                        TreeNode trCopy = currentChild.getCopy();
+                        trCopy.setChance(this.getNodeById(child.n1).getNumOfEdgesByCost(this.getNodeById(child.n2), i));
+                        trCopy.setCost(i);
+                        trChild.AddChild(trCopy);
+                    }
+                }
+                else {
+                    for (Integer i : this.getNodeById(child.n1).getDiffEdges(this.getNodeById(sourceID)))
+                    {
+                        TreeNode trCopy = currentChild.getCopy();
+                        trCopy.setChance(this.getNodeById(child.n1).getNumOfEdgesByCost(this.getNodeById(sourceID), i));
+                        trCopy.setCost(i);
+                        trChild.AddChild(trCopy);
+                    }
+                }
+            }
+
+            TreeNode trCopy = trChild.getCopy();
+            treenode.AddChild(trCopy);
             treenode.setAncestors(walkThroughNodes);
         }
         
         return treenode;
     }
     
-    public List<Integer> getNeighbors(int source, List<Integer> walkThroughNodes)
+    public List<IntPair> getNeighbors(int source, List<Integer> walkThroughNodes)
     {
-        List<Integer> closestNodes = new ArrayList<>();
+        List<IntPair> closestNodes = new ArrayList<>();
         List<Integer> newWalkThroughNodes = new ArrayList<>();
-        List<Integer> recursionResult = new ArrayList<>();
-        List<Integer> totalResults = new ArrayList<>();
+        List<IntPair> recursionResult = new ArrayList<>();
+        List<IntPair> totalResults = new ArrayList<>();
         Node ndSource = getNodeById(source);
         boolean isLocated = false;
-                
+
+        // Get the closest nodes by loop over the edges of the source node
         for(int i = 0; i < ndSource.getEdges().size(); i++)
         {
+            boolean bIsFound = false;
+
             if(ndSource.getEdges().get(i).getNode1().getId() != source)
             {
-                closestNodes.add(ndSource.getEdges().get(i).getNode1().getId());
+                for (IntPair nPair : closestNodes)
+                {
+                    if (nPair.n1 == ndSource.getEdges().get(i).getNode1().getId() && nPair.n2 == source)
+                    {
+                        bIsFound = true;
+                    }
+                }
+
+                if(!bIsFound)
+                    closestNodes.add(new IntPair(ndSource.getEdges().get(i).getNode1().getId(), source));
             }
             else
             {
-                closestNodes.add(ndSource.getEdges().get(i).getNode2().getId());
+                for (IntPair nPair : closestNodes)
+                {
+                    if (nPair.n1 == ndSource.getEdges().get(i).getNode2().getId() && nPair.n2 == source)
+                    {
+                        bIsFound = true;
+                    }
+                }
+
+                if (!bIsFound)
+                    closestNodes.add(new IntPair(ndSource.getEdges().get(i).getNode2().getId(),source));
             }
         }
-        
+
+        // Check if the nodes we walk through already is none
         if(walkThroughNodes.isEmpty())
         {
             return closestNodes;
         }
-        
+
+        // For every node we've been walk through
         for (Integer walkThroughNode : walkThroughNodes)
         {
-            for (Integer closestNode : closestNodes)
+            // Check if he is in our closest nodes
+            for (IntPair closestNode : closestNodes)
             {
-                if(Objects.equals(closestNode, walkThroughNode))
+                if(Objects.equals(closestNode.n1, walkThroughNode))
                 {
                     isLocated = true;
                 }
             }
-            
+
+            // If not, then add it to the new nodes we walk through
             if(isLocated == false)
             {
                 newWalkThroughNodes.add(walkThroughNode);
@@ -250,39 +348,121 @@ public class Graph
             
             isLocated = false;
         }
-        
-        for (Integer closestNode : closestNodes)
+
+        // For each closest node
+        for (IntPair closestNode : closestNodes)
         {
-            if(walkThroughNodes.contains(closestNode))
+            // If we walk through this node
+            if(walkThroughNodes.contains(closestNode.n1))
             {
-                recursionResult = getNeighbors(closestNode, newWalkThroughNodes);
+                // get neighbots of this node with the new walked through nodes
+                recursionResult = getNeighbors(closestNode.n1, newWalkThroughNodes);
                 
-                for (Integer recursionResult1 : recursionResult)
+                for (IntPair recursionResult1 : recursionResult)
                 {
                     totalResults.add(recursionResult1);
                 }
             }
         }
         
-        for (Integer closestNode : closestNodes)
+        for (IntPair closestNode : closestNodes)
         {
             totalResults.add(closestNode);
         }
-        
-        while(totalResults.contains(source))
+
+        List<IntPair> tempResult = new ArrayList<>();
+
+        for(IntPair nResPair : totalResults)
         {
-            totalResults.remove((Integer)source);
+             if (nResPair.n1 != source)
+            {
+                tempResult.add(nResPair);
+            }
         }
+        totalResults = tempResult;
+//        while(totalResults.contains(source))
+//        {
+//            totalResults.remove((Integer)source);
+//        }
+
+        List<IntPair> tempResult2 = new ArrayList<>();
                 
         for (Integer walkThroughNode : walkThroughNodes)
         {
-            while(totalResults.contains(walkThroughNode))
+//            while(totalResults.contains(walkThroughNode))
+//            {
+//                totalResults.remove(walkThroughNode);
+//            }
+            tempResult2 = new ArrayList<>();
+
+            for(IntPair nResPair : totalResults)
             {
-                totalResults.remove(walkThroughNode);
+                if (nResPair.n1 != walkThroughNode)
+                {
+                    tempResult2.add(nResPair);
+                }
             }
+
+            totalResults = tempResult2;
         }
         
         return totalResults;
     }
+
+    public TreeNode getEndTree(int sourceId, int parent, List<IntPair> brothers, List<Integer> ancestors)
+    {
+        //List<Integer>
+        TreeNode treenode = new TreeNode(sourceId, parent);
+        TreeNode trDone = new TreeNode(-1, 0);
+
+        if (sourceId == -1)
+            return treenode;
+
+        treenode.AddChild(trDone);
+
+        for (IntPair ipBrother : brothers)
+        {
+            List<IntPair> lst = getNeighbors(ipBrother.n1, ancestors);
+            List<IntPair> lstTemp = new ArrayList<>();
+
+            for (IntPair ipTemp : lst)
+            {
+                if (ipTemp.n2 != parent)
+                {
+                    lstTemp.add(ipTemp);
+                    ancestors.add(ipTemp.n2);
+                }
+            }
+
+            List<IntPair> lstOtherBros = new ArrayList<>();
+
+            for (IntPair ipBrothers : brothers)
+            {
+                if (!ipBrothers.equals(ipBrother))
+                {
+                    lstOtherBros.add(ipBrothers);
+                }
+            }
+
+            lstOtherBros.addAll(lstTemp);
+
+            TreeNode trNin = getEndTree(ipBrother.n1, ipBrother.n2, lstOtherBros, ancestors);
+            TreeNode trChild = new TreeNode(ipBrother.n1, ipBrother.n2);
+            trChild.setCost(1);
+
+            for (Integer i : this.getNodeById(ipBrother.n1).getDiffEdges(this.getNodeById(ipBrother.n2)))
+            {
+                TreeNode trCopy = trNin.getCopy();
+                trCopy.setChance(this.getNodeById(ipBrother.n1).getNumOfEdgesByCost(this.getNodeById(ipBrother.n2), i));
+                trCopy.setCost(i);
+                trChild.AddChild(trCopy);
+            }
+
+            treenode.AddChild(trChild);
+        }
+
+        return treenode;
+    }
 }
+
 

@@ -64,6 +64,45 @@ public class Node
 
         return lst;
     }
+
+    public double getNumOfEdgesByCost(Node nOther, int cost)
+    {
+        double nCount = 0;
+        double nCountEdges = 0;
+
+        for(Edge e : this.lstEdges)
+        {
+            if ((e.getNode1() == nOther || e.getNode2() == nOther) && e.getEdgeCost() == cost)
+            {
+                nCount++;
+            }
+        }
+
+        for(Edge e : this.lstEdges)
+        {
+            if (e.getNode1() == nOther || e.getNode2() == nOther)
+            {
+                nCountEdges++;
+            }
+        }
+
+        return nCount / nCountEdges;
+    }
+
+    public List<Integer> getDiffEdges(Node nOther)
+    {
+         List<Integer> lstDiffEdges = new ArrayList<Integer>();
+
+        for(Edge e : this.lstEdges)
+        {
+            if (!lstDiffEdges.contains(e.getEdgeCost()) && (e.getNode1() == nOther || e.getNode2() == nOther))
+            {
+                lstDiffEdges.add(e.getEdgeCost());
+            }
+        }
+
+        return lstDiffEdges;
+    }
     
     public boolean isEdgeExist(Edge e)
     {
