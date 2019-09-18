@@ -112,6 +112,12 @@ public final class Utilities
 
         return lstPercentages;
     }
+
+    public static boolean checkPairExist(List<IntPair> lstIP, int n1, int n2)
+    {
+        return (lstIP.stream().filter(o -> (o.n1 == n1 && o.n2 == n2) ||
+                                           (o.n1 == n2 && o.n2 == n1)).findFirst().isPresent());
+    }
 }
 
 

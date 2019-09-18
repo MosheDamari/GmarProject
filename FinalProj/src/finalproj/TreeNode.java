@@ -5,9 +5,7 @@
  */
 package finalproj;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TreeNode
 {
@@ -250,25 +248,66 @@ public class TreeNode
         }
     }
 
-    public double getBestPathCost(TreeNode tr)
+    // Get the best path and his cost
+    public HashMap<Double, HashMap<Integer, Integer>> getBestPathCost(TreeNode tr, boolean isEven , List<IntPair> path, int sourceId, int targetId)
     {
         if (tr.getId() == -1)
         {
-            return tr.getTotalCost();
-        }
+            HashMap<Double, HashMap<Integer, Integer>> hm = new HashMap<>();
 
-        double minCost = Double.MAX_VALUE;
-
-        for (TreeNode child : tr.getChildren())
-        {
-            double currCost = getBestPathCost(child);
-
-            if (currCost < minCost)
+            int parent = -1;
+            List<Integer> totalPath = new ArrayList<>();
+            for (int i = path.size()-1; i-- > 0;)
             {
-                minCost = currCost;
+                if(parent == -1) {
+                    if (path.get(i).n1 == targetId) {
+                        parent = path.get(i).n2;
+                        totalPath.add(targetId);
+                    }
+                }
+                else if (path.get(i).n1 == parent)
+                {
+                    totalPath.add(parent);
+                    parent = path.get(i).n2;
+
+                    if (path.get(i).n2 == sourceId)
+                    {
+                        totalPath.add(sourceId);
+                        break;
+                    }
+                }
             }
+
+            Collections.reverse(totalPath);
+
+            HashMap<Integer, Integer> hmTotalPath = new HashMap<>();
+
+            if (totalPath.size() == 1)
+            {
+                hmTotalPath.put(sourceId, totalPath.get(0));
+            }
+            else {
+                for (int i = 0; i < totalPath.size(); i++) {
+                    if (i + 1 < totalPath.size()) {
+                        hmTotalPath.put(totalPath.get(i), totalPath.get(i + 1));
+                    }
+                }
+            }
+
+            hm.put(tr.getTotalCost(), hmTotalPath);
+
+            return hm;
         }
 
-        return minCost;
+        TreeNode minChild = tr.getChildren().stream().min(Comparator.comparing(TreeNode::getTotalCost)).get();
+        List<IntPair> cpPath = new ArrayList<>(path);
+
+        if (isEven)
+        {
+            cpPath.add(new IntPair(minChild.getId(), tr.getId()));
+        }
+
+        return getBestPathCost(minChild, !isEven, cpPath, sourceId, targetId);
     }
 }
+

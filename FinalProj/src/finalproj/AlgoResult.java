@@ -5,10 +5,7 @@
  */
 package finalproj;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -41,6 +38,8 @@ public class AlgoResult
 
     public List<Integer> getRoute(){ return this.route; }
 
+    public void setRoute(List<Integer> lstRoute){ this.route = lstRoute; }
+
     public void addNode(int n)
     {
         this.route.add(n);
@@ -69,5 +68,31 @@ public class AlgoResult
         return false;
     
     }
-    
+
+    public HashMap<Integer, Integer> getRouteCosts(Graph g)
+    {
+        Comparator<Edge> edgeComparator = Comparator.comparing(Edge::getEdgeCost);
+        int routeCost = 0, totalCost = 0;
+        HashMap<Integer, Integer> costs = new HashMap<>();
+
+        for (int i = 0; i < this.getRoute().size() - 1; i++)
+        {
+            List<Edge> lstEdges = g.getEdgesBetweenNodes(g.getNodeById(this.getRoute().get(i)), g.getNodeById(this.getRoute().get(i+1)));
+            lstEdges.sort(edgeComparator);
+
+            for (Edge edge : lstEdges)
+            {
+                totalCost++;
+
+                if (edge.getSlot() != 1)
+                {
+                    routeCost += edge.getEdgeCost();
+                    break;
+                }
+            }
+        }
+
+        costs.put(routeCost, totalCost);
+        return costs;
+    }
 }

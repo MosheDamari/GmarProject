@@ -32,8 +32,26 @@ public class Graph
     public Graph(Graph g)
     {
         this.nDiscoverCost = g.nDiscoverCost;
-        this.lstNodes = new ArrayList<>(g.lstNodes);
-        this.lstEdges = new ArrayList<>(g.lstEdges);
+        this.lstNodes = new ArrayList<>();
+        this.lstEdges = new ArrayList<>();
+
+        // copy the nodes
+        for (Node node : g.lstNodes)
+        {
+            Node copyNode = new Node(node.getId());
+            this.lstNodes.add(copyNode);
+        }
+
+        // copy the edges
+        for (Edge edge : g.lstEdges)
+        {
+            Node newN1 = this.lstNodes.stream().filter(o -> o.getId() == edge.getNode1().getId()).findFirst().get();
+            Node newN2 = this.lstNodes.stream().filter(o -> o.getId() == edge.getNode2().getId()).findFirst().get();
+            Edge copyEdge = new Edge(edge.getSlot(), edge.getEdgeCost(), newN1, newN2);
+            newN1.addEdge(copyEdge);
+            newN2.addEdge(copyEdge);
+            this.lstEdges.add(copyEdge);
+        }
     }
 
     public int getDiscoverCost(){ return this.nDiscoverCost; }
@@ -82,33 +100,45 @@ public class Graph
     }
 
     // Check if we can route this path
-    public List<Edge> checkRoute(HashMap<Integer, Integer> hRoute, int nCustBandWidth)
-    {
+    public List<Edge> checkRoute(HashMap<Integer, Integer> hRoute, int nCustBandWidth) {
         List<Edge> lstE;
         List<Edge> lstVisitedEdges = new ArrayList<>();
 
         Comparator<Edge> edgeComparator = Comparator.comparing(Edge::getEdgeCost);
+        // Comparator<Edge> edgeComparator1 = Comparator.comparing(Edge::getSlot);
 
         // for each source in our path
-        for (int nCurrNode : hRoute.keySet())
-        {
+        for (int nCurrNode : hRoute.keySet()) {
             // get the edges between the source and the destiny nodes and sort them by cost
             lstE = this.getEdgesBetweenNodes(this.getNodeById(nCurrNode), this.getNodeById(hRoute.get(nCurrNode)));
             lstE.sort(edgeComparator);
 
-            // check if we can navigate through each edge that our dijkstra found
-            // if not, one of the edges are catched, than return this unavailable edge
-            for (int i = 0; i < nCustBandWidth; i++)
-            {
-                lstVisitedEdges.add(lstE.get(i));
-
-                if (lstE.get(i).getSlot() == 1)
-                {
-                    this.removeEdge(lstE.get(i));
+            int edgeCost = lstE.get(0).getEdgeCost();
+            for (int j = 0; j < lstE.size(); j++) {
+                if (edgeCost == lstE.get(j).getEdgeCost() && lstE.get(j).getSlot() == 1) {
+                    lstVisitedEdges.add(lstE.get(j));
+                } else if (edgeCost == lstE.get(j).getEdgeCost() && lstE.get(j).getSlot() != 1) {
+                    break;
+                } else {
+                    lstVisitedEdges.stream().forEach(x -> this.removeEdge(x));
                     return lstVisitedEdges;
                 }
+
             }
         }
+
+        // check if we can navigate through each edge that our dijkstra found
+        // if not, one of the edges are catched, than return this unavailable edge
+//            for (int i = 0; i < nCustBandWidth; i++)
+//            {
+//                lstVisitedEdges.add(lstE.get(i));
+//
+//                if (lstE.get(i).getSlot() == 1)
+//                {
+//                    this.removeEdge(lstE.get(i));
+//                    return lstVisitedEdges;
+//                }
+//            }
 
         return null;
     }
@@ -217,7 +247,7 @@ public class Graph
                     }
                 }
 
-                currentChild = getEndTree(child.n1, child.n2, brothers ,walkThroughNodes);
+                currentChild = getEndTree(child.n1, child.n2, brothers ,walkThroughNodes, new ArrayList<>());
             }
             else
                 currentChild = getDecisionTree(child.n1, child.n2, targetID, walkThroughNodes);
@@ -409,28 +439,34 @@ public class Graph
         return totalResults;
     }
 
-    public TreeNode getEndTree(int sourceId, int parent, List<IntPair> brothers, List<Integer> ancestors)
+    public TreeNode getEndTree(int sourceId, int parent, List<IntPair> brothers, List<Integer> ancestors, List<IntPair> oldBros)
     {
         //List<Integer>
+        List<Integer> newAncestors = new ArrayList<>(ancestors);
         TreeNode treenode = new TreeNode(sourceId, parent);
         TreeNode trDone = new TreeNode(-1, 0);
+        oldBros.add(new IntPair(sourceId, parent));
 
-        if (sourceId == -1)
+        if (sourceId == -1) {
             return treenode;
+        }
 
         treenode.AddChild(trDone);
 
         for (IntPair ipBrother : brothers)
         {
-            List<IntPair> lst = getNeighbors(ipBrother.n1, ancestors);
+            List<IntPair> lst = getNeighbors(ipBrother.n1, newAncestors);
             List<IntPair> lstTemp = new ArrayList<>();
 
             for (IntPair ipTemp : lst)
             {
-                if (ipTemp.n2 != parent)
-                {
+                if (ipTemp.n2 != parent && !newAncestors.contains(ipTemp.n2)) {
                     lstTemp.add(ipTemp);
-                    ancestors.add(ipTemp.n2);
+
+                    if (!newAncestors.contains(ipTemp.n2))
+                    {
+                        newAncestors.add(ipTemp.n2);
+                    }
                 }
             }
 
@@ -446,7 +482,7 @@ public class Graph
 
             lstOtherBros.addAll(lstTemp);
 
-            TreeNode trNin = getEndTree(ipBrother.n1, ipBrother.n2, lstOtherBros, ancestors);
+            TreeNode trNin = getEndTree(ipBrother.n1, ipBrother.n2, lstOtherBros, newAncestors, oldBros);
             TreeNode trChild = new TreeNode(ipBrother.n1, ipBrother.n2);
             trChild.setCost(1);
 
